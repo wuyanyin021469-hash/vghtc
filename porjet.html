@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>「無瓶醫院」永續轉型計畫互動報告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Emerald Green (#059669) & Warm Neutrals (Gray/Beige) -->
+    <!-- Application Structure Plan: 採用單頁儀表板與敘事結合的SPA結構。分為六大區塊：1. 總體願景與核心價值；2. 問題與利害關係人痛點 (互動卡片設計)；3. 策略雙軌 (推力/拉力視覺化)；4. 核心行動方案 (五個頁籤)；5. 效益儀表板 (KPI圖表)；6. 風險與展望 (收合列表)。此結構以用戶探索為核心，將抽象的戰略和數據具體化，特別將最複雜的行動方案拆解為頁籤，並讓利害關係人分析可互動，以提升計畫的理解度和參與感。 -->
+    <!-- Visualization & Content Choices: 
+        - 報告資訊: 關鍵KPI (50%, 80%, 60%, 15%, 100%)。目標: 具體展現目標達成率。呈現: 混合圖 (Bar/Line - Chart.js)。互動: 滾動觸發圖表載入。理由: 清楚比較各項目標的比例。使用: Chart.js (Canvas)。
+        - 報告資訊: 策略雙軌 (推力/拉力) & 四大支柱。目標: 視覺化計畫的核心架構。呈現: 結構圖 (HTML/Tailwind Flex/Grid)。互動: 靜態視覺化。理由: 將抽象戰略轉為清晰的兩極化模型。使用: HTML/Tailwind。
+        - 報告資訊: 利害關係人痛點。目標: 組織化呈現多方立場。呈現: 互動卡片。互動: 點擊切換痛點/效益視圖。理由: 讓使用者能從不同視角理解問題。使用: Vanilla JS。
+        - 報告資訊: 行動方案。目標: 組織龐大的細節內容。呈現: 頁籤式導航。互動: 點擊頁籤切換內容。理由: 避免過長滾動，聚焦單一方案細節。使用: Vanilla JS。
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 350px; 
+            max-height: 450px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        /* 導航列 active 樣式 */
+        nav button.active {
+            font-weight: 700;
+            color: #059669; 
+            border-bottom-color: #059669;
+        }
+        /* 頁籤 active 樣式 */
+        .tab-btn.active {
+            border-color: #059669;
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* 利害關係人卡片 */
+        .stakeholder-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+        }
+        .stakeholder-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        }
+        /* 收合列表 */
+        .accordion-content {
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        .accordion-button.active + .accordion-content {
+            display: block;
+            max-height: 1200px;
+        }
+        .accordion-button.active .rotate-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- 導航列 -->
+    <nav id="navbar" class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex flex-col items-start">
+                    <span class="text-xl font-bold text-emerald-700">中榮永續黑客松：減少包裝水使用行動提案競賽</span>
+                    <span class="text-sm font-black text-black">員工卡號 : F433 部門 : 資訊室 姓名 : 吳彥穎</span>
+                </div>
+                <div class="hidden sm:flex sm:space-x-4">
+                    <button data-target="#vision" class="nav-link border-b-2 border-transparent inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        核心願景
+                    </button>
+                    <button data-target="#stakeholder" class="nav-link border-b-2 border-transparent inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        痛點分析
+                    </button>
+                    <button data-target="#actions" class="nav-link border-b-2 border-transparent inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        行動方案
+                    </button>
+                    <button data-target="#kpis" class="nav-link border-b-2 border-transparent inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        效益儀表板
+                    </button>
+                    <button data-target="#risks" class="nav-link border-b-2 border-transparent inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        風險與展望
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- 1. 總體願景與核心價值 -->
+        <section id="vision" class="pt-16 -mt-16">
+            <div class="bg-white shadow-xl rounded-xl p-8 text-center">
+                <h1 class="text-4xl font-extrabold text-emerald-800 mb-2">「無瓶醫院」永續轉型計畫</h1>
+                <p class="text-xl text-gray-600 mb-8">結合AI智慧科技、行為科學與制度創新的綠色醫療實踐</p>
+                <p class="mt-4 text-gray-700 max-w-4xl mx-auto mb-10">
+                    本計畫以四大支柱為核心，目標是將永續 (ESG) 理念深度內化為醫院文化，不僅實現塑膠廢棄物的量化減排，更要傳承台中榮總「愛心、品質、創新、當責」的核心價值。
+                </p>
+
+                <div class="grid md:grid-cols-4 gap-6 text-center">
+                    <div class="bg-emerald-50 p-6 rounded-xl border-t-4 border-emerald-600">
+                        <span class="text-4xl block mb-2">🤖</span>
+                        <h3 class="text-lg font-bold text-emerald-700">AI智慧科技</h3>
+                        <p class="text-sm text-gray-500">提升飲水體驗與維護效率</p>
+                    </div>
+                    <div class="bg-emerald-50 p-6 rounded-xl border-t-4 border-emerald-600">
+                        <span class="text-4xl block mb-2">🧠</span>
+                        <h3 class="text-lg font-bold text-emerald-700">行為挑戰</h3>
+                        <p class="text-sm text-gray-500">透過遊戲化激發員工主動參與</p>
+                    </div>
+                    <div class="bg-emerald-50 p-6 rounded-xl border-t-4 border-emerald-600">
+                        <span class="text-4xl block mb-2">🏛️</span>
+                        <h3 class="text-lg font-bold text-emerald-700">制度導入</h3>
+                        <p class="text-sm text-gray-500">建立綠色會議SOP，源頭減量</p>
+                    </div>
+                    <div class="bg-emerald-50 p-6 rounded-xl border-t-4 border-emerald-600">
+                        <span class="text-4xl block mb-2">🌱</span>
+                        <h3 class="text-lg font-bold text-emerald-700">永續教育</h3>
+                        <p class="text-sm text-gray-500">深化文化認同與社會當責</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 問題與痛點 -->
+        <section id="stakeholder" class="pt-20 -mt-16">
+            <div class="bg-white shadow-xl rounded-xl p-8">
+                <h2 class="text-3xl font-bold text-center text-emerald-800 mb-6">問題現況與利害關係人痛點分析</h2>
+                <p class="text-center text-gray-600 max-w-4xl mx-auto mb-8">
+                    核心問題是院內瓶裝水使用普遍，源於「資訊不透明」、「信任度不足」、「便利性缺乏」與「動機缺乏」四大根本原因。點擊下方卡片可切換查看各方「痛點」與計畫提供的「目標效益」。
+                </p>
+
+                <!-- 利害關係人互動卡片 -->
+                <div id="stakeholder-container" class="grid md:grid-cols-4 gap-6">
+                    <div class="stakeholder-card bg-gray-100 p-4 rounded-lg text-center border-b-4 border-red-400" data-stakeholder="employee" data-view="pain">
+                        <span class="text-3xl block mb-2">🧑‍⚕️</span>
+                        <h3 class="font-bold text-gray-800">員工 (醫護/行政)</h3>
+                        <p class="text-sm text-red-600 font-semibold mt-2">點擊切換 痛點/效益</p>
+                    </div>
+                    <div class="stakeholder-card bg-gray-100 p-4 rounded-lg text-center border-b-4 border-red-400" data-stakeholder="patient" data-view="pain">
+                        <span class="text-3xl block mb-2">👨‍👩‍👧‍👦</span>
+                        <h3 class="font-bold text-gray-800">病患與家屬</h3>
+                        <p class="text-sm text-red-600 font-semibold mt-2">點擊切換 痛點/效益</p>
+                    </div>
+                    <div class="stakeholder-card bg-gray-100 p-4 rounded-lg text-center border-b-4 border-red-400" data-stakeholder="management" data-view="pain">
+                        <span class="text-3xl block mb-2">🏥</span>
+                        <h3 class="font-bold text-gray-800">醫院管理階層</h3>
+                        <p class="text-sm text-red-600 font-semibold mt-2">點擊切換 痛點/效益</p>
+                    </div>
+                    <div class="stakeholder-card bg-gray-100 p-4 rounded-lg text-center border-b-4 border-red-400" data-stakeholder="public" data-view="pain">
+                        <span class="text-3xl block mb-2">🌍</span>
+                        <h3 class="font-bold text-gray-800">環境/社會大眾</h3>
+                        <p class="text-sm text-red-600 font-semibold mt-2">點擊切換 痛點/效益</p>
+                    </div>
+                </div>
+
+                <!-- 動態顯示區域 -->
+                <div id="stakeholder-details" class="mt-8 bg-emerald-50 p-6 rounded-xl border border-emerald-200">
+                    <h3 class="text-2xl font-bold text-emerald-700 mb-3">請選擇上方關係人卡片，查看詳細資訊。</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700" id="detail-list">
+                        <li>預設顯示：點擊「員工」卡片，可看到其「補水路徑費時」等痛點。</li>
+                        <li>再次點擊，卡片將切換為顯示「AI地圖快速定位」等目標效益。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 3. 策略雙軌 -->
+        <section id="strategy" class="pt-20 -mt-16">
+            <div class="bg-white shadow-xl rounded-xl p-8">
+                <h2 class="text-3xl font-bold text-center text-emerald-800 mb-6">整體策略：推力(Push)與拉力(Pull)並行</h2>
+                <p class="text-center text-gray-600 max-w-4xl mx-auto mb-8">
+                    為確保變革的全面性與持久性，本計畫採用雙軌策略。拉力 (Pull) 提升動機和體驗，推力 (Push) 建立規範和制度。
+                </p>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 推力 (Push) -->
+                    <div class="bg-red-50 p-6 rounded-xl border-l-4 border-red-600">
+                        <div class="flex items-center mb-4">
+                            <span class="text-4xl mr-3">➡️</span>
+                            <h3 class="text-2xl font-bold text-red-700">推力 (Push) - 建立規範</h3>
+                        </div>
+                        <p class="text-gray-700 mb-4">策略核心是透過制度和教育，從上而下，從源頭改變供應與行為習慣。</p>
+                        <ul class="list-disc list-inside space-y-3 text-gray-700">
+                            <li>制度導入 (無瓶會議)：納入行政考核，強制改變供應習慣。</li>
+                            <li>永續教育 (宣導)：建立「為何而做」的文化共識與使命連結。</li>
+                        </ul>
+                    </div>
+
+                    <!-- 拉力 (Pull) -->
+                    <div class="bg-blue-50 p-6 rounded-xl border-l-4 border-blue-600">
+                        <div class="flex items-center mb-4">
+                            <span class="text-4xl mr-3">🎣</span>
+                            <h3 class="text-2xl font-bold text-blue-700">拉力 (Pull) - 提升動機</h3>
+                        </div>
+                        <p class="text-gray-700 mb-4">策略核心是提升環保行為的便利性、趣味性與榮譽感，吸引主動參與。</p>
+                        <ul class="list-disc list-inside space-y-3 text-gray-700">
+                            <li>AI技術創新 (智慧地圖)：讓找水變得簡單、透明、智能。</li>
+                            <li>行為挑戰 (遊戲化)：透過積分和獎勵，讓環保行動更有趣。</li>
+                            <li>品牌推廣 (Green Hero)：讓環保成為一種榮總員工的時尚與驕傲。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 核心行動方案 -->
+        <section id="actions" class="pt-20 -mt-16">
+            <div class="bg-white shadow-xl rounded-xl p-8">
+                <h2 class="text-3xl font-bold text-center text-emerald-800 mb-6">核心行動方案：五大支柱細節</h2>
+                <p class="text-center text-gray-600 max-w-4xl mx-auto mb-8">
+                    本計畫由五大具體行動方案構成，涵蓋從技術基礎建設到文化推廣的完整藍圖。
+                </p>
+
+                <!-- 頁籤按鈕 -->
+                <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-8">
+                    <button class="tab-btn active text-sm sm:text-base py-2 px-3 sm:px-4 font-medium rounded-full border-2 border-transparent" data-tab="tab-ai">1. 🤖 AI智慧科技</button>
+                    <button class="tab-btn text-sm sm:text-base py-2 px-3 sm:px-4 font-medium rounded-full border-2 border-transparent" data-tab="tab-system">2. 🏛️ 制度導入</button>
+                    <button class="tab-btn text-sm sm:text-base py-2 px-3 sm:px-4 font-medium rounded-full border-2 border-transparent" data-tab="tab-behavior">3. 💪 行為挑戰</button>
+                    <button class="tab-btn text-sm sm:text-base py-2 px-3 sm:px-4 font-medium rounded-full border-2 border-transparent" data-tab="tab-education">4. 🌱 永續教育</button>
+                    <button class="tab-btn text-sm sm:text-base py-2 px-3 sm:px-4 font-medium rounded-full border-2 border-transparent" data-tab="tab-branding">5. 🧃 品牌推廣</button>
+                </div>
+
+                <!-- 頁籤內容 -->
+                <div class="tab-container mt-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <!-- 1. AI技術創新 -->
+                    <div id="tab-ai" class="tab-content active">
+                        <h3 class="text-xl font-bold text-emerald-700 mb-4">🌐 1. AI技術創新 — 「中榮Go Green」智慧補水地圖系統</h3>
+                        <p class="text-gray-600 mb-4">此系統透過數據和智能，解決補水「便利性缺乏」與「信任度不足」的根本問題。</p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>核心功能：顯示即時狀態 (綠/灰/紅)，AI預測高峰時段與建議補水時機，一鍵導航。</li>
+                            <li>水質透明化：顯示最近檢測日期與下次濾芯更換排程，可上傳檢測報告PDF。AI持續監測水質異常。</li>
+                            <li>智能派工：使用者「問題回報」後，AI自動通知相關後勤單位，優化維修效率。</li>
+                            <li>個人化推薦：醫院App整合，AI根據頻率與偏好，主動推播「個人化補水提醒」與「最佳補水路徑」。</li>
+                        </ul>
+                    </div>
+
+                    <!-- 2. 制度導入 -->
+                    <div id="tab-system" class="tab-content">
+                        <h3 class="text-xl font-bold text-emerald-700 mb-4">🏛️ 2. 制度導入 — 「綠色會議」指引 (SOP)</h3>
+                        <p class="text-gray-600 mb-4">透過制度化的「推力」，從組織行政層面徹底改變一次性瓶裝水的供應習慣。</p>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="bg-white p-3 rounded shadow-sm">
+                                <p class="font-semibold text-gray-800">SOP 步驟一：會前通知</p>
+                                <p class="text-sm text-gray-600">e-mail自動帶入「本院為無瓶醫院，請自備環保杯」標準圖文。</p>
+                            </div>
+                            <div class="bg-white p-3 rounded shadow-sm">
+                                <p class="font-semibold text-gray-800">SOP 步驟二：場地佈置</p>
+                                <p class="text-sm text-gray-600">停止採購瓶裝水。改設置「綠色會議補水角 (Green Water Station)」。</p>
+                            </div>
+                            <div class="bg-white p-3 rounded shadow-sm">
+                                <p class="font-semibold text-gray-800">配套措施</p>
+                                <p class="text-sm text-gray-600">執行率納入各科部行政考核或ESG評分項目，確保執行力。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. 行為挑戰 -->
+                    <div id="tab-behavior" class="tab-content">
+                        <h3 class="text-xl font-bold text-emerald-700 mb-4">💪 3. 行為挑戰 — 「中榮無瓶挑戰月」與「瓶水思源」競賽</h3>
+                        <p class="text-gray-600 mb-4">結合 AI 遊戲化 (Gamification) 提升動機 (拉力)，並透過創意競賽激發員工智慧。</p>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded shadow-md border-l-4 border-yellow-500">
+                                <h4 class="font-semibold mb-2 text-lg text-yellow-700">無瓶挑戰月 (AI 積分)</h4>
+                                <ul class="list-disc list-inside space-y-1 text-gray-700 text-sm">
+                                    <li>基礎積分：每次掃 QR Code 補水獲 10 點。</li>
+                                    <li>AI加乘：分析「連續挑戰成功」、「特定時段補水」給予額外積分。</li>
+                                    <li>團體賽：以「科部」為單位計算平均積分，發揮同儕效應。</li>
+                                    <li>Tier 3 獎勵：客製環保瓶、院長表揚、超商商品卡、等獎勵。</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white p-4 rounded shadow-md border-l-4 border-teal-500">
+                                <h4 class="font-semibold mb-2 text-lg text-teal-700">瓶水思源：創意提案競賽</h4>
+                                <ul class="list-disc list-inside space-y-1 text-gray-700 text-sm">
+                                    <li>目的：鼓勵員工從工作場域出發，提出實際可行減塑方案。</li>
+                                    <li>範疇：創新飲水解決方案、包裝水替代方案、廢棄物管理優化等。</li>
+                                    <li>AI輔助：協助大量提案分類、關鍵字提取與潛在效益評估。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. 永續教育 -->
+                    <div id="tab-education" class="tab-content">
+                        <h3 class="text-xl font-bold text-emerald-700 mb-4">🌱 4. 永續教育 — 「瓶起改變」宣導活動</h3>
+                        <p class="text-gray-600 mb-4">深化文化基石，將環保理念與榮總「愛心、品質、創新、當責」核心價值緊密連結。</p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>溝通主軸：結合「健康」(水質透明) 與「便利」(AI地圖)，擴大宣導維度。</li>
+                            <li>Q版人物 (滴滴醫護小隊)：設計具親和力的Q版角色，代表榮總四大核心價值，應用於海報、App成就解鎖畫面。</li>
+                            <li>實體宣傳：設置「全院已減少 [ 12,345 ] 瓶」動態數據看板，營造氛圍。</li>
+                            <li>制度化教育：列為新進人員必修課程；於病患入院須知中友善提醒「自備環保杯」。</li>
+                        </ul>
+                    </div>
+
+                    <!-- 5. 品牌推廣 -->
+                    <div id="tab-branding" class="tab-content">
+                        <h3 class="text-xl font-bold text-emerald-700 mb-4">🧃 5. 品牌推廣 — 「Green Hero」環保保溫水瓶設計與 LINE 公仔</h3>
+                        <p class="text-gray-600 mb-4">透過有形產品和社群媒體工具，將綠色行動轉化為榮譽感和外部品牌形象。</p>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded shadow-md border-l-4 border-gray-400">
+                                <h4 class="font-semibold mb-2 text-lg text-gray-700">A. 員工專屬環保保溫水瓶</h4>
+                                <ul class="list-disc list-inside space-y-1 text-gray-700 text-sm">
+                                    <li>材質：高品質304不鏽鋼，500ml-750ml容量。</li>
+                                    <li>識別：印製醫院LOGO、Green Hero字樣，結合Q版插畫。</li>
+                                    <li>客製化：提供雷射雕刻姓名/員工編號服務，提升專屬感。</li>
+                                    <li>功能 (方案A)：瓶底預留 QR Code 空間，可綁定員工 ID 快速積分。</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white p-4 rounded shadow-md border-l-4 border-gray-400">
+                                <h4 class="font-semibold mb-2 text-lg text-gray-700">B. LINE 公仔設計與應用</h4>
+                                <ul class="list-disc list-inside space-y-1 text-gray-700 text-sm">
+                                    <li>目的：將Q版人物延伸，透過社群平台擴大宣導觸及與趣味性。</li>
+                                    <li>貼圖應用：設計多組日常與環保相關貼圖，如「中榮愛心！」、「當責永續！」等。</li>
+                                    <li>對外宣導：在醫院官方 LINE 帳號推廣，強化公眾對「無瓶醫院」的認知。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 效益儀表板 -->
+        <section id="kpis" class="pt-20 -mt-16">
+            <div class="bg-white shadow-xl rounded-xl p-8">
+                <h2 class="text-3xl font-bold text-center text-emerald-800 mb-6">預期效益與成效評估 (KPIs) 儀表板</h2>
+                <p class="text-center text-gray-600 max-w-4xl mx-auto mb-8">
+                    計畫成效將依據五大類別的關鍵績效指標進行量化追蹤，確保減量、創新、文化與營運效益全面達成。
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">主要目標達成率 (%)</h3>
+                        <div class="chart-container">
+                            <canvas id="kpiTargetChart"></canvas>
+                        </div>
+                        <div class="text-sm text-center text-gray-500 mt-2">目標數據: 瓶裝水採購減少 50%, App使用率 80%, 挑戰參與率 60%, 智能派工效率提升 15%</div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">KPI 項目類別佔比</h3>
+                        <div class="chart-container">
+                            <canvas id="kpiCategoryChart"></canvas>
+                        </div>
+                        <div class="text-sm text-center text-gray-500 mt-2">總計 16 項 KPI，涵蓋減量、AI、文化、品牌及營運效益。</div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <h3 class="text-2xl font-bold text-emerald-700 mb-4">關鍵數字 (Hard Numbers)</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="p-4 bg-emerald-100 rounded-lg">
+                            <p class="text-3xl font-extrabold text-emerald-800">50%</p>
+                            <p class="text-sm text-gray-600 mt-1">瓶裝水採購量減少 (年)</p>
+                        </div>
+                        <div class="p-4 bg-emerald-100 rounded-lg">
+                            <p class="text-3xl font-extrabold text-emerald-800">80%</p>
+                            <p class="text-sm text-gray-600 mt-1">App下載/使用率 (員工)</p>
+                        </div>
+                        <div class="p-4 bg-emerald-100 rounded-lg">
+                            <p class="text-3xl font-extrabold text-emerald-800">60%</p>
+                            <p class="text-sm text-gray-600 mt-1">挑戰月參與率 (員工)</p>
+                        </div>
+                        <div class="p-4 bg-emerald-100 rounded-lg">
+                            <p class="text-3xl font-extrabold text-emerald-800">500<span class="text-xl">KG/月</span></p>
+                            <p class="text-sm text-gray-600 mt-1">塑膠瓶回收量減少目標</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. 風險與展望 -->
+        <section id="risks" class="pt-20 -mt-16">
+            <div class="bg-white shadow-xl rounded-xl p-8">
+                <h2 class="text-3xl font-bold text-center text-emerald-800 mb-6">可行性、風險管理與延伸展望</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 風險管理 -->
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">計畫風險與對策</h3>
+                        <p class="text-gray-600 mb-4">點擊下方風險項目，可查看具體應對策略。</p>
+                        <div id="risk-accordion" class="space-y-3">
+                            <div class="border border-gray-200 rounded-lg">
+                                <button class="accordion-button w-full flex justify-between items-center p-4 bg-gray-50 rounded-lg font-semibold text-gray-700 hover:bg-gray-100 transition">
+                                    <span>🤖 AI技術與開發風險</span>
+                                    <span class="rotate-icon transition-transform duration-300">▼</span>
+                                </button>
+                                <div class="accordion-content bg-white px-4 pt-2 pb-4">
+                                    <p class="mb-2 font-medium text-red-600">風險：系統開發時程延宕；AI預測準確度不足；數據隱私與倫理問題。</p>
+                                    <p class="text-green-700">對策：分階段上線 (Phase 1: 靜態地圖；Phase 2: 動態導航地圖；  Phase 3: AI 個人化服務)，優先確保核心功能穩定。持續優化 AI 模型。 </p>
+                                </div>
+                            </div>
+                            <div class="border border-gray-200 rounded-lg">
+                                <button class="accordion-button w-full flex justify-between items-center p-4 bg-gray-50 rounded-lg font-semibold text-gray-700 hover:bg-gray-100 transition">
+                                    <span>💧 設備與水質信任風險</span>
+                                    <span class="rotate-icon transition-transform duration-300">▼</span>
+                                </button>
+                                <div class="accordion-content bg-white px-4 pt-2 pb-4">
+                                    <p class="mb-2 font-medium text-red-600">風險：飲水機數量不足或狀態不佳；水質疑慮根深蒂固。</p>
+                                    <p class="text-green-700">對策：優先在地圖上標示「推薦補水點」，編列預算逐年汰換。極致透明：檢測日期與報告必須即時更新，並提供「一鍵回報」機制。</p>
+                                </div>
+                            </div>
+                            <div class="border border-gray-200 rounded-lg">
+                                <button class="accordion-button w-full flex justify-between items-center p-4 bg-gray-50 rounded-lg font-semibold text-gray-700 hover:bg-gray-100 transition">
+                                    <span>📣 推廣與參與度風險</span>
+                                    <span class="rotate-icon transition-transform duration-300">▼</span>
+                                </button>
+                                <div class="accordion-content bg-white px-4 pt-2 pb-4">
+                                    <p class="mb-2 font-medium text-red-600">風險：員工參與度低，認為是「找麻煩」；Q版人物設計不符喜好。</p>
+                                    <p class="text-green-700">對策：高層支持帶頭使用；提供「休假時數」等強力誘因；善用「科部團體賽」；舉辦內部投票決定Q版人物設計。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 延伸展望 -->
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">延伸展望 (Future Outlook)</h3>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-600">
+                                <h4 class="font-semibold text-blue-800 text-lg">AI智慧物聯 (IoT)</h4>
+                                <p class="text-gray-600 mt-1">將飲水機納入 IoT 管理，未來擴展至全院能源設備，由AI統籌，實現全院節能最佳化。</p>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-600">
+                                <h4 class="font-semibold text-blue-800 text-lg">全方位AI永續 App</h4>
+                                <p class="text-gray-600 mt-1">擴展地圖功能，納入「AI節能地圖」(隨手關燈回報)、「綠色餐廳」(AI分析廚餘) 等，打造一站式永續平台。</p>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-600">
+                                <h4 class="font-semibold text-blue-800 text-lg">社區與同業擴散</h4>
+                                <p class="text-gray-600 mt-1">將「無瓶醫院」模組標準化，分享經驗給其他醫療院所，擴大榮總的社會影響力。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center p-6 mt-8 text-gray-500 text-sm border-t border-gray-200">
+        台中榮總「無瓶醫院」永續轉型提案計畫互動報告 — 核心價值：愛心、品質、創新、當責
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // 資料定義 (利害關係人)
+            const stakeholderData = {
+                employee: {
+                    pain: ' 補水路徑費時，工作忙碌時無法迅速補水。 . 對水質有疑慮，擔心衛生問題影響健康。 . 缺乏改變習慣的明確動機或誘因。',
+                    benefit: ' AI地圖快速定位，提升便利性與健康飲水。 . 透明化水質資訊，消除疑慮。 . 透過積分挑戰，增加參與感與榮譽感。'
+                },
+                patient: {
+                    pain: ' 不熟悉醫院環境，難以找到飲水機。 . 探病/住院時需重複購買瓶裝水，增加開銷。',
+                    benefit: '簡化補水流程，提升就醫體驗。 . 確保飲用水源安全與透明，安心飲用。'
+                },
+                management: {
+                    pain: '處理大量塑膠廢棄物的成本高昂。 . 飲水機維護狀態不透明，維修效率低落。 . ESG/CSR 缺乏具體、創新的實踐成果。',
+                    benefit: '降低採購與廢棄物處理成本。 . 透過AI智能派工，優化維修管理效率。 . 提升醫院永續品牌形象與社會責任實踐。'
+                },
+                public: {
+                    pain: '醫療院所產生的塑膠廢棄物，對環境造成負擔，與綠色醫院形象不符。',
+                    benefit: '減少碳足跡與塑膠污染，樹立綠色醫療標竿。'
+                }
+            };
+
+            // 利害關係人互動功能
+            const stakeholderCards = document.querySelectorAll('.stakeholder-card');
+            const detailContainer = document.getElementById('stakeholder-details');
+            const detailList = document.getElementById('detail-list');
+
+            stakeholderCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const target = card.dataset.stakeholder;
+                    let currentView = card.dataset.view;
+                    let newView;
+
+                    // 檢查並更新視圖狀態
+                    if (currentView === 'pain') {
+                        newView = 'benefit';
+                        card.classList.remove('border-red-400');
+                        card.classList.add('border-green-400');
+                    } else {
+                        newView = 'pain';
+                        card.classList.remove('border-green-400');
+                        card.classList.add('border-red-400');
+                    }
+                    card.dataset.view = newView;
+                    
+                    // 重設其他卡片的視圖為 pain (方便單一聚焦)
+                    stakeholderCards.forEach(c => {
+                        if (c !== card) {
+                            c.dataset.view = 'pain';
+                            c.classList.remove('border-green-400');
+                            c.classList.add('border-red-400');
+                        }
+                    });
+
+                    // 更新細節區域
+                    updateStakeholderDetails(target, newView);
+                });
+            });
+            
+            // 初始載入預設資訊 (員工痛點)
+            updateStakeholderDetails('employee', 'pain');
+            
+            function updateStakeholderDetails(stakeholder, view) {
+                const data = stakeholderData[stakeholder][view];
+                const parts = data.split('. ');
+                
+                // 標題切換
+                const titleElement = detailContainer.querySelector('h3');
+                // FIX: Convert NodeList to Array before using .find() for compatibility
+                const cardTitle = Array.from(stakeholderCards).find(c => c.dataset.stakeholder === stakeholder).querySelector('h3').textContent;
+                
+                if (view === 'pain') {
+                    titleElement.textContent = `${cardTitle} - 痛點分析 (Pain Points)`;
+                    detailContainer.classList.remove('bg-emerald-100');
+                    detailContainer.classList.add('bg-emerald-50');
+                } else {
+                    titleElement.textContent = `${cardTitle} - 目標效益 (Goals & Benefits)`;
+                    detailContainer.classList.remove('bg-emerald-50');
+                    detailContainer.classList.add('bg-emerald-100');
+                }
+
+                detailList.innerHTML = '';
+                parts.forEach(part => {
+                    if (part.trim()) {
+                        const li = document.createElement('li');
+                        li.textContent = part.trim().replace(/^\d\.?/, ''); 
+                        detailList.appendChild(li);
+                    }
+                });
+            }
+
+
+            // 頁籤功能
+            function initTabs() {
+                const tabButtons = document.querySelectorAll('.tab-btn');
+                const tabContents = document.querySelectorAll('.tab-content');
+
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const targetTab = button.dataset.tab;
+
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+
+                        tabContents.forEach(content => {
+                            if (content.id === targetTab) {
+                                content.classList.add('active');
+                            } else {
+                                content.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+            }
+
+            // 收合列表 (Accordion) 功能
+            function initAccordion(containerId) {
+                const accordionButtons = document.querySelectorAll(`#${containerId} .accordion-button`);
+                
+                accordionButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const currentlyActive = button.classList.contains('active');
+                        
+                        accordionButtons.forEach(btn => {
+                            if (btn !== button) {
+                                btn.classList.remove('active');
+                            }
+                        });
+
+                        if (!currentlyActive) {
+                            button.classList.add('active');
+                        } else {
+                            button.classList.remove('active');
+                        }
+                    });
+                });
+            }
+
+            // 圖表功能
+            function initCharts() {
+                // 圖表 1: 主要目標達成率
+                const kpiTargetCtx = document.getElementById('kpiTargetChart')?.getContext('2d');
+                if (kpiTargetCtx) {
+                    new Chart(kpiTargetCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['瓶裝水減量', 'App使用率', '挑戰參與率', 'AI派工效率'],
+                            datasets: [{
+                                label: '目標達成率 (%)',
+                                data: [50, 80, 60, 15],
+                                backgroundColor: [
+                                    'rgba(5, 150, 105, 0.7)', 
+                                    'rgba(16, 185, 129, 0.7)',
+                                    'rgba(52, 211, 153, 0.7)', 
+                                    'rgba(110, 231, 183, 0.7)'
+                                ],
+                                borderColor: 'rgba(5, 150, 105, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                type: 'line',
+                                label: '100%落實率目標',
+                                data: [100, 100, 100, 100], 
+                                borderColor: 'rgba(239, 68, 68, 1)', 
+                                borderWidth: 2,
+                                fill: false,
+                                pointRadius: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false 
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            if (context.dataset.type === 'bar') {
+                                                return `${context.label}: ${context.raw}%`;
+                                            }
+                                            return null;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    title: {
+                                        display: true,
+                                        text: '百分比 (%)'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // 圖表 2: KPI 項目類別佔比
+                const kpiCategoryCtx = document.getElementById('kpiCategoryChart')?.getContext('2d');
+                if (kpiCategoryCtx) {
+                    new Chart(kpiCategoryCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['♻ 減量成效 (2項)', '💡 AI創新整合 (4項)', '🏥 文化深化 (3項)', '💧 品牌加值 (3項)', '(新增) 營運效益 (2項)'],
+                            datasets: [{
+                                label: 'KPI 項目數量',
+                                data: [2, 4, 3, 3, 2], // 根據文件，文化深化(5項)->3項, 品牌加值(4項)->3項. 總計14項
+                                backgroundColor: [
+                                    'rgba(5, 150, 105, 0.8)', 
+                                    'rgba(59, 130, 246, 0.8)',
+                                    'rgba(245, 158, 11, 0.8)', 
+                                    'rgba(168, 85, 247, 0.8)', 
+                                    'rgba(239, 68, 68, 0.8)'
+                                ],
+                                hoverOffset: 8
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 15
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: '效益評估類別組成 (總項目數: 14)'
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+            
+            // 導航滾動功能與初始化
+            function initNavigation() {
+                const navLinks = document.querySelectorAll('.nav-link');
+                const navbarHeight = document.getElementById('navbar').offsetHeight;
+
+                navLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetId = link.dataset.target;
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            const targetPosition = targetElement.offsetTop - navbarHeight - 20;
+                            window.scrollTo({
+                                top: targetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
+            }
+
+            // 執行所有初始化
+            initTabs();
+            initAccordion('risk-accordion');
+            initCharts();
+            initNavigation();
+        });
+    </script>
+</body>
+</html>
