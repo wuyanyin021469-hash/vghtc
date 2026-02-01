@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今彩539 智能分析系統</title>
+    <meta name="description" content="今彩539智能分析系統 - 提供歷史數據分析、熱門號碼統計與AI智能選號推薦">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #0F172A;
+            --surface-color: #1E293B;
+            --card-color: #334155;
+            --primary: #3B82F6;
+            --primary-hover: #2563EB;
+            --secondary: #EF4444;
+            --secondary-hover: #DC2626;
+            --accent: #F59E0B;
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --success: #10B981;
+            --border: #475569;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .header h1 {
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: var(--surface-color);
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px 30px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            background: var(--card-color);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface-color);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group label {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        input[type="number"] {
+            padding: 10px 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: var(--card-color);
+            color: var(--text-primary);
+            font-size: 1em;
+            width: 80px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-hover));
+            color: white;
+            font-size: 1.2em;
+            padding: 15px 40px;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Status */
+        .status {
+            padding: 10px 20px;
+            background: var(--card-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status.loading::before {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--primary);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Stats */
+        .stats-box {
+            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            line-height: 1.8;
+        }
+
+        .stats-section {
+            margin-bottom: 20px;
+        }
+
+        .stats-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .stats-label {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .number-tag {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .number-tag.hot {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .number-tag.cold {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Strategy Selection */
+        .strategy-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .radio-card {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .radio-card input[type="radio"] {
+            display: none;
+        }
+
+        .radio-card label {
+            display: block;
+            padding: 15px 20px;
+            background: var(--card-color);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .radio-card label:hover {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .radio-card input[type="radio"]:checked + label {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Lottery Balls */
+        .balls-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 40px 20px;
+            flex-wrap: wrap;
+        }
+
+        .ball {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, #D97706 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4),
+                        inset 0 -3px 10px rgba(0,0,0,0.3),
+                        inset 0 3px 10px rgba(255,255,255,0.3);
+            animation: ballPop 0.5s ease backwards;
+            position: relative;
+        }
+
+        .ball::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            width: 30%;
+            height: 30%;
+            background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        @keyframes ballPop {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(180deg);
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        .ball:nth-child(1) { animation-delay: 0.1s; }
+        .ball:nth-child(2) { animation-delay: 0.2s; }
+        .ball:nth-child(3) { animation-delay: 0.3s; }
+        .ball:nth-child(4) { animation-delay: 0.4s; }
+        .ball:nth-child(5) { animation-delay: 0.5s; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 1.2em;
+        }
+
+        /* History Table */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            background: var(--card-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            font-weight: 700;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(255,255,255,0.02);
+        }
+
+        tbody tr:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .number-cell {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: var(--accent);
+        }
+
+        /* Generate Button Container */
+        .generate-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .strategy-group {
+                flex-direction: column;
+            }
+
+            .ball {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5em;
+            }
+
+            .balls-container {
+                gap: 10px;
+            }
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎰 今彩539 智能分析系統</h1>
+            <p>運用大數據分析，智能推薦幸運號碼</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('analysis')">智能分析與選號</button>
+            <button class="tab-btn" onclick="switchTab('history')">歷史獎號列表</button>
+        </div>
+
+        <!-- Analysis Tab -->
+        <div id="analysis-tab" class="tab-content active">
+            <!-- Database Management Card -->
+            <div class="card">
+                <h2 class="card-title">資料庫管理</h2>
+                <div class="controls">
+                    <div class="input-group">
+                        <label for="pages-input">更新最近頁數:</label>
+                        <input type="number" id="pages-input" value="5" min="1" max="20">
+                    </div>
+                    <button class="btn btn-primary" id="update-btn" onclick="updateData()">執行更新</button>
+                    <div class="status" id="status-text">系統就緒</div>
+                </div>
+            </div>
+
+            <!-- Statistics Card -->
+            <div class="card">
+                <h2 class="card-title">近期數據統計 (近50期)</h2>
+                <div class="stats-box" id="stats-content">
+                    <div class="empty-state">資料庫為空，請先點擊上方「執行更新」</div>
+                </div>
+            </div>
+
+            <!-- Recommendation Card -->
+            <div class="card">
+                <h2 class="card-title">智能號碼推薦</h2>
+                
+                <div class="strategy-group">
+                    <div class="radio-card">
+                        <input type="radio" name="strategy" id="strategy-hot" value="hot">
+                        <label for="strategy-hot">🔥 熱門強勢</label>
+                    </div>
+                    <div class="radio-card">
+                        <input type="radio" name="strategy" id="strategy-cold" value="cold">
+                        <label for="strategy-cold">❄️ 冷門補號</label>
+                    </div>
+                    <div class="radio-card">
+                        <input type="radio" name="strategy" id="strategy-mixed" value="mixed">
+                        <label for="strategy-mixed">⚖️ 冷熱平衡</label>
+                    </div>
+                    <div class="radio-card">
+                        <input type="radio" name="strategy" id="strategy-smart" value="smart" checked>
+                        <label for="strategy-smart">🤖 AI 智能推薦</label>
+                    </div>
+                </div>
+
+                <div class="generate-container">
+                    <button class="btn btn-secondary" onclick="generateNumbers()">✨ 立即產生幸運號碼</button>
+                </div>
+
+                <div id="balls-display" class="empty-state">
+                    準備產生號碼...
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history-tab" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">歷史開獎記錄</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>開獎日期</th>
+                                <th>號碼 1</th>
+                                <th>號碼 2</th>
+                                <th>號碼 3</th>
+                                <th>號碼 4</th>
+                                <th>號碼 5</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-tbody">
+                            <tr>
+                                <td colspan="6" class="empty-state">暫無資料</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // Global data storage
+        let lotteryData = [];
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadFromLocalStorage();
+            refreshAllData();
+        });
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // Update data from server (CORS proxy required for actual implementation)
+        async function updateData() {
+            const pages = parseInt(document.getElementById('pages-input').value) || 5;
+            const updateBtn = document.getElementById('update-btn');
+            const statusText = document.getElementById('status-text');
+
+            updateBtn.disabled = true;
+            statusText.className = 'status loading';
+            statusText.textContent = '更新資料中...';
+
+            try {
+                // Note: Due to CORS restrictions, direct fetching from the lottery website
+                // won't work in a browser. This is a simulation.
+                // In production, you'd need a backend proxy or use the original Python crawler.
+                
+                // Simulated data fetch (replace with actual API call through CORS proxy)
+                await simulateFetch(pages);
+                
+                statusText.className = 'status';
+                statusText.textContent = `完成, 新增 ${lotteryData.length} 筆`;
+                updateBtn.disabled = false;
+                
+                saveToLocalStorage();
+                refreshAllData();
+                alert(`成功載入資料！(共 ${lotteryData.length} 筆)`);
+            } catch (error) {
+                statusText.className = 'status';
+                statusText.textContent = '更新失敗';
+                updateBtn.disabled = false;
+                alert(`抓取失敗: ${error.message}`);
+            }
+        }
+
+        // Simulate data fetching (for demo purposes)
+        async function simulateFetch(pages) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Generate some sample data
+                    const sampleData = [];
+                    const today = new Date();
+                    
+                    for (let i = 0; i < pages * 10; i++) {
+                        const date = new Date(today);
+                        date.setDate(date.getDate() - i);
+                        
+                        const numbers = [];
+                        while (numbers.length < 5) {
+                            const num = Math.floor(Math.random() * 39) + 1;
+                            if (!numbers.includes(num)) {
+                                numbers.push(num);
+                            }
+                        }
+                        numbers.sort((a, b) => a - b);
+                        
+                        sampleData.push({
+                            date_full: date.toISOString().split('T')[0],
+                            numbers: numbers,
+                            raw_date: `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}${String(date.getFullYear()).slice(-2)}`
+                        });
+                    }
+                    
+                    lotteryData = sampleData;
+                    resolve();
+                }, 1500);
+            });
+        }
+
+        // Local storage functions
+        function saveToLocalStorage() {
+            localStorage.setItem('lotteryData', JSON.stringify(lotteryData));
+        }
+
+        function loadFromLocalStorage() {
+            const stored = localStorage.getItem('lotteryData');
+            if (stored) {
+                lotteryData = JSON.parse(stored);
+            }
+        }
+
+        // Refresh all displays
+        function refreshAllData() {
+            refreshStats();
+            refreshHistory();
+        }
+
+        // Refresh statistics display
+        function refreshStats() {
+            const statsContent = document.getElementById('stats-content');
+            
+            if (!lotteryData || lotteryData.length === 0) {
+                statsContent.innerHTML = '<div class="empty-state">資料庫為空，請先點擊上方「執行更新」</div>';
+                return;
+            }
+
+            const freq = getFrequency(50);
+            const sortedFreq = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+            
+            const hot = sortedFreq.slice(0, 5);
+            const cold = sortedFreq.slice(-5);
+
+            let html = '<div class="stats-section">';
+            html += '<span class="stats-label">近50期數據分析</span>';
+            html += '</div>';
+
+            html += '<div class="stats-section">';
+            html += '<span class="stats-label">最熱門號碼:</span><br>';
+            hot.forEach(([num, count]) => {
+                html += `<span class="number-tag hot">${String(num).padStart(2, '0')} (${count}次)</span>`;
+            });
+            html += '</div>';
+
+            html += '<div class="stats-section">';
+            html += '<span class="stats-label">最冷門號碼:</span><br>';
+            cold.forEach(([num, count]) => {
+                html += `<span class="number-tag cold">${String(num).padStart(2, '0')} (${count}次)</span>`;
+            });
+            html += '</div>';
+
+            html += `<div class="stats-section" style="margin-top: 20px; color: var(--text-secondary);">`;
+            html += `總資料庫筆數: ${lotteryData.length} 筆`;
+            html += '</div>';
+
+            statsContent.innerHTML = html;
+        }
+
+        // Refresh history table
+        function refreshHistory() {
+            const tbody = document.getElementById('history-tbody');
+            
+            if (!lotteryData || lotteryData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">暫無資料</td></tr>';
+                return;
+            }
+
+            let html = '';
+            lotteryData.forEach(entry => {
+                const nums = entry.numbers || [];
+                html += '<tr>';
+                html += `<td>${entry.date_full}</td>`;
+                for (let i = 0; i < 5; i++) {
+                    html += `<td class="number-cell">${String(nums[i] || 0).padStart(2, '0')}</td>`;
+                }
+                html += '</tr>';
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // Get frequency analysis
+        function getFrequency(limit = 100) {
+            const dataset = lotteryData.slice(0, limit);
+            const freq = {};
+            
+            // Initialize all numbers 1-39
+            for (let i = 1; i <= 39; i++) {
+                freq[i] = 0;
+            }
+
+            // Count occurrences
+            dataset.forEach(entry => {
+                entry.numbers.forEach(num => {
+                    freq[num] = (freq[num] || 0) + 1;
+                });
+            });
+
+            return freq;
+        }
+
+        // Generate recommended numbers
+        function generateNumbers() {
+            if (!lotteryData || lotteryData.length === 0) {
+                alert('請先更新資料庫！');
+                return;
+            }
+
+            const strategy = document.querySelector('input[name="strategy"]:checked').value;
+            const numbers = getRecommendation(strategy);
+            
+            displayBalls(numbers);
+        }
+
+        // Get recommendation based on strategy
+        function getRecommendation(strategy, count = 5) {
+            const freq = getFrequency(50);
+            const sortedFreq = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+
+            let selected = [];
+
+            switch (strategy) {
+                case 'hot':
+                    selected = sortedFreq.slice(0, count).map(x => parseInt(x[0]));
+                    break;
+
+                case 'cold':
+                    selected = sortedFreq.slice(-count).map(x => parseInt(x[0]));
+                    break;
+
+                case 'mixed':
+                    const hot = sortedFreq.slice(0, 3).map(x => parseInt(x[0]));
+                    const cold = sortedFreq.slice(-2).map(x => parseInt(x[0]));
+                    selected = [...hot, ...cold];
+                    break;
+
+                case 'smart':
+                    // Weighted random selection
+                    const population = sortedFreq.map(x => parseInt(x[0]));
+                    const weights = sortedFreq.map(x => x[1] + 0.1);
+                    
+                    const selectedSet = new Set();
+                    let attempts = 0;
+                    
+                    while (selectedSet.size < count && attempts < 100) {
+                        attempts++;
+                        const pick = weightedRandom(population, weights);
+                        selectedSet.add(pick);
+                    }
+                    
+                    // Fill remaining with random if needed
+                    while (selectedSet.size < count) {
+                        const random = Math.floor(Math.random() * 39) + 1;
+                        selectedSet.add(random);
+                    }
+                    
+                    selected = Array.from(selectedSet);
+                    break;
+
+                default:
+                    // Pure random
+                    while (selected.length < count) {
+                        const num = Math.floor(Math.random() * 39) + 1;
+                        if (!selected.includes(num)) {
+                            selected.push(num);
+                        }
+                    }
+            }
+
+            return selected.sort((a, b) => a - b);
+        }
+
+        // Weighted random selection
+        function weightedRandom(items, weights) {
+            const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+            let random = Math.random() * totalWeight;
+            
+            for (let i = 0; i < items.length; i++) {
+                random -= weights[i];
+                if (random <= 0) {
+                    return items[i];
+                }
+            }
+            
+            return items[items.length - 1];
+        }
+
+        // Display lottery balls
+        function displayBalls(numbers) {
+            const display = document.getElementById('balls-display');
+            
+            let html = '<div class="balls-container">';
+            numbers.forEach(num => {
+                html += `<div class="ball">${String(num).padStart(2, '0')}</div>`;
+            });
+            html += '</div>';
+            
+            display.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
