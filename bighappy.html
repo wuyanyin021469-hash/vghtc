@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 台灣大樂透號碼分析系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1A237E 0%, #3949AB 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid #E3F2FD;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1A237E;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3949AB;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            max-height: 500px;
+            overflow-y: auto;
+            display: block;
+        }
+
+        .history-table thead {
+            position: sticky;
+            top: 0;
+            background: #3949AB;
+            color: white;
+            z-index: 10;
+        }
+
+        .history-table th {
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .history-table tbody {
+            display: block;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        .history-table tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .history-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .history-table tbody tr:nth-child(even) {
+            background: #F5F5F5;
+        }
+
+        .history-table tbody tr:hover {
+            background: #E3F2FD;
+            transition: background 0.3s;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stats-box {
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFF3CD 100%);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #FFE082;
+        }
+
+        .stats-box.cold {
+            background: linear-gradient(135deg, #E8F4F8 0%, #B3E5FC 100%);
+            border: 2px solid #81D4FA;
+        }
+
+        .stats-box h3 {
+            color: #1A237E;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .stats-content {
+            font-size: 0.95em;
+            line-height: 1.8;
+            color: #37474F;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-line;
+        }
+
+        .recommend-section {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid #E3F2FD;
+        }
+
+        .mode-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #F5F7FA;
+            border-radius: 10px;
+        }
+
+        .mode-selector label {
+            font-weight: bold;
+            color: #1A237E;
+        }
+
+        .mode-selector select {
+            padding: 10px 15px;
+            border: 2px solid #3949AB;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .mode-selector select:hover {
+            border-color: #5C6BC0;
+            box-shadow: 0 2px 8px rgba(57, 73, 171, 0.2);
+        }
+
+        .strategy-desc {
+            color: #616161;
+            font-size: 0.9em;
+            flex: 1;
+        }
+
+        .recommend-results {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            white-space: pre-line;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background: #F5F7FA;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3949AB 0%, #5C6BC0 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(57, 73, 171, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #00897B 0%, #26A69A 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 137, 123, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .number-ball {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            text-align: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            color: white;
+            font-weight: bold;
+            margin: 2px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .special-ball {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 台灣大樂透號碼分析系統</h1>
+            <p>智能分析 · 精準推薦 · 數據驅動</p>
+        </div>
+
+        <div class="main-content">
+            <div class="section">
+                <div class="section-title">📊 歷史開獎紀錄</div>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%">期數</th>
+                            <th style="width: 25%">開獎日期</th>
+                            <th style="width: 45%">中獎號碼</th>
+                            <th style="width: 15%">特別號</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <tr>
+                            <td colspan="4" class="loading">點擊「更新開獎資料」載入數據...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📈 號碼分析</div>
+                <div class="analysis-grid">
+                    <div class="stats-box">
+                        <h3>🔥 熱門分析</h3>
+                        <div class="stats-content" id="hotStats">點擊「智能分析與推薦」開始分析...</div>
+                    </div>
+                    <div class="stats-box cold">
+                        <h3>❄️ 冷門分析</h3>
+                        <div class="stats-content" id="coldStats">點擊「智能分析與推薦」開始分析...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommend-section">
+                <div class="section-title">🎯 智能推薦號碼</div>
+                <div class="mode-selector">
+                    <label>推薦策略：</label>
+                    <select id="recommendMode">
+                        <option value="保守型">保守型</option>
+                        <option value="平衡型" selected>平衡型</option>
+                        <option value="激進型">激進型</option>
+                        <option value="冷門型">冷門型</option>
+                        <option value="熱門型">熱門型</option>
+                    </select>
+                    <span class="strategy-desc" id="strategyDesc">綜合考慮熱門、冷門、區間分布等多種因素</span>
+                </div>
+                <div class="recommend-results" id="recommendResults">
+                    選擇推薦策略後，點擊「智能分析與推薦」生成推薦號碼...
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="updateData()">🔄 更新開獎資料</button>
+            <button class="btn btn-secondary" onclick="analyzeNumbers()">✨ 智能分析與推薦</button>
+        </div>
+    </div>
+
+    <script>
+        let lotteryData = [];
+
+        // 策略說明
+        const strategyDescriptions = {
+            "保守型": "重視歷史熱門號碼，選擇出現頻率較高的號碼",
+            "平衡型": "綜合考慮熱門、冷門、區間分布等多種因素",
+            "激進型": "重視長期未開的冷門號碼，增加隨機性",
+            "冷門型": "主要選擇長期未開出的號碼，相信回歸趨勢",
+            "熱門型": "專注於近期頻繁出現的熱門號碼，跟隨趨勢"
+        };
+
+        // 更新策略說明
+        document.getElementById('recommendMode').addEventListener('change', function() {
+            const mode = this.value;
+            document.getElementById('strategyDesc').textContent = strategyDescriptions[mode];
+        });
+
+        // 更新開獎資料
+        async function updateData() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '<tr><td colspan="4" class="loading">正在載入數據，請稍候...</td></tr>';
+
+            try {
+                // 使用 CORS 代理來獲取數據
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const targetUrl = encodeURIComponent('https://www.pilio.idv.tw/ltobig/list.asp');
+                
+                const response = await fetch(proxyUrl + targetUrl);
+                const text = await response.text();
+                
+                // 解析 HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                
+                // 查找所有表格行
+                const rows = doc.querySelectorAll('tr');
+                lotteryData = [];
+                let drawNumber = 1;
+                
+                rows.forEach(row => {
+                    const cols = row.querySelectorAll('td, th');
+                    if (cols.length >= 3) {
+                        const dateText = cols[0].textContent.trim();
+                        const numbersText = cols[1].textContent.trim();
+                        const specialText = cols[2] ? cols[2].textContent.trim() : '';
+                        
+                        // 檢查是否為有效的日期格式
+                        if (/\d{4}[-/]\d{1,2}[-/]\d{1,2}/.test(dateText)) {
+                            // 提取所有數字
+                            const allNumbers = numbersText.match(/\d+/g);
+                            if (allNumbers && allNumbers.length >= 6) {
+                                const mainNumbers = allNumbers.slice(0, 6);
+                                let special = specialText.match(/\d+/);
+                                if (!special && allNumbers.length >= 7) {
+                                    special = allNumbers[6];
+                                } else if (special) {
+                                    special = special[0];
+                                }
+                                
+                                lotteryData.push({
+                                    draw: drawNumber++,
+                                    date: dateText,
+                                    numbers: mainNumbers.map(n => parseInt(n)),
+                                    special: special ? parseInt(special) : 0
+                                });
+                            }
+                        }
+                    }
+                });
+                
+                // 如果沒有數據，使用模擬數據
+                if (lotteryData.length === 0) {
+                    alert('無法從網站獲取數據，使用模擬數據進行演示...');
+                    generateMockData();
+                }
+                
+                displayHistoryData();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('無法連接到數據源，使用模擬數據進行演示...');
+                generateMockData();
+                displayHistoryData();
+            }
+        }
+
+        // 生成模擬數據
+        function generateMockData() {
+            lotteryData = [];
+            const today = new Date();
+            
+            for (let i = 0; i < 50; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i * 3);
+                
+                const numbers = [];
+                while (numbers.length < 6) {
+                    const num = Math.floor(Math.random() * 49) + 1;
+                    if (!numbers.includes(num)) {
+                        numbers.push(num);
+                    }
+                }
+                numbers.sort((a, b) => a - b);
+                
+                let special;
+                do {
+                    special = Math.floor(Math.random() * 49) + 1;
+                } while (numbers.includes(special));
+                
+                lotteryData.push({
+                    draw: 50 - i,
+                    date: date.toISOString().split('T')[0],
+                    numbers: numbers,
+                    special: special
+                });
+            }
+        }
+
+        // 顯示歷史數據
+        function displayHistoryData() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+            
+            lotteryData.forEach((data, index) => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = data.draw;
+                row.insertCell(1).textContent = data.date;
+                row.insertCell(2).textContent = data.numbers.join(', ');
+                row.insertCell(3).textContent = data.special;
+            });
+        }
+
+        // 分析號碼
+        function analyzeNumbers() {
+            if (lotteryData.length === 0) {
+                alert('請先更新開獎資料！');
+                return;
+            }
+
+            // 收集最近30期數據
+            const recentData = lotteryData.slice(0, Math.min(30, lotteryData.length));
+            const allNumbers = [];
+            const allSpecials = [];
+            
+            recentData.forEach(data => {
+                allNumbers.push(...data.numbers);
+                allSpecials.push(data.special);
+            });
+
+            // 計算統計數據
+            const stats = calculateAdvancedStats(allNumbers, allSpecials);
+            
+            // 顯示熱門分析
+            displayHotStats(stats);
+            
+            // 顯示冷門分析
+            displayColdStats(stats);
+            
+            // 生成推薦號碼
+            const mode = document.getElementById('recommendMode').value;
+            generateRecommendations(stats, mode);
+        }
+
+        // 計算進階統計
+        function calculateAdvancedStats(numbers, specials) {
+            const stats = {};
+            
+            // 號碼頻率
+            const numberFreq = {};
+            const specialFreq = {};
+            
+            for (let i = 1; i <= 49; i++) {
+                numberFreq[i] = 0;
+                specialFreq[i] = 0;
+            }
+            
+            numbers.forEach(n => numberFreq[n]++);
+            specials.forEach(n => specialFreq[n]++);
+            
+            // 熱門和冷門號碼
+            stats.hotNumbers = Object.entries(numberFreq)
+                .sort((a, b) => b[1] - a[1]);
+            stats.coldNumbers = Object.entries(numberFreq)
+                .sort((a, b) => a[1] - b[1]);
+            
+            // 特別號統計
+            stats.hotSpecials = Object.entries(specialFreq)
+                .sort((a, b) => b[1] - a[1]);
+            stats.coldSpecials = Object.entries(specialFreq)
+                .sort((a, b) => a[1] - b[1]);
+            
+            // 長期未開號碼
+            const totalDraws = numbers.length / 6;
+            stats.longWaiting = Object.entries(numberFreq)
+                .map(([num, freq]) => [num, totalDraws - freq])
+                .sort((a, b) => b[1] - a[1]);
+            
+            // 奇偶比
+            const oddCount = numbers.filter(n => n % 2 === 1).length;
+            const evenCount = numbers.length - oddCount;
+            stats.oddEvenRatio = evenCount > 0 ? oddCount / evenCount : 0;
+            
+            // 大小比
+            const highCount = numbers.filter(n => n > 25).length;
+            const lowCount = numbers.length - highCount;
+            stats.highLowRatio = lowCount > 0 ? highCount / lowCount : 0;
+            
+            // 區間分布
+            const zones = [0, 0, 0, 0, 0];
+            numbers.forEach(n => {
+                const zoneIndex = Math.min(Math.floor((n - 1) / 10), 4);
+                zones[zoneIndex]++;
+            });
+            stats.zoneDistribution = zones.map(z => z / totalDraws);
+            
+            // 連號分析
+            let consecutiveCount = 0;
+            let gapOneCount = 0;
+            
+            for (let i = 0; i < numbers.length; i += 6) {
+                const draw = numbers.slice(i, i + 6).sort((a, b) => a - b);
+                for (let j = 0; j < draw.length - 1; j++) {
+                    const gap = draw[j + 1] - draw[j];
+                    if (gap === 1) consecutiveCount++;
+                    else if (gap === 2) gapOneCount++;
+                }
+            }
+            
+            const totalPairs = totalDraws * 5;
+            stats.consecutiveRatio = consecutiveCount / totalPairs;
+            stats.gapOneRatio = gapOneCount / totalPairs;
+            
+            return stats;
+        }
+
+        // 顯示熱門統計
+        function displayHotStats(stats) {
+            const hotStats = document.getElementById('hotStats');
+            const top8 = stats.hotNumbers.slice(0, 8);
+            
+            let html = `【熱門號碼 TOP 8】\n`;
+            html += `${'─'.repeat(30)}\n`;
+            html += top8.map(([num, freq]) => `${num.padStart(2, '0')}(${freq}次)`).join(', ') + '\n\n';
+            
+            html += `【號碼分布統計】\n`;
+            html += `${'─'.repeat(30)}\n`;
+            html += `奇偶比：${stats.oddEvenRatio.toFixed(2)} (建議: 0.8-1.2)\n`;
+            html += `大小比：${stats.highLowRatio.toFixed(2)} (建議: 0.8-1.2)\n\n`;
+            
+            html += `【區間分布】\n`;
+            html += `${'─'.repeat(30)}\n`;
+            html += `1-10:   ${stats.zoneDistribution[0].toFixed(1)}個/期\n`;
+            html += `11-20:  ${stats.zoneDistribution[1].toFixed(1)}個/期\n`;
+            html += `21-30:  ${stats.zoneDistribution[2].toFixed(1)}個/期\n`;
+            html += `31-40:  ${stats.zoneDistribution[3].toFixed(1)}個/期\n`;
+            html += `41-49:  ${stats.zoneDistribution[4].toFixed(1)}個/期\n\n`;
+            
+            html += `【連號分析】\n`;
+            html += `${'─'.repeat(30)}\n`;
+            html += `連號率：${(stats.consecutiveRatio * 100).toFixed(1)}%\n`;
+            html += `間隔率：${(stats.gapOneRatio * 100).toFixed(1)}%`;
+            
+            hotStats.textContent = html;
+        }
+
+        // 顯示冷門統計
+        function displayColdStats(stats) {
+            const coldStats = document.getElementById('coldStats');
+            const top8Cold = stats.coldNumbers.slice(0, 8);
+            const top4Waiting = stats.longWaiting.slice(0, 4);
+            
+            let html = `【冷門號碼 TOP 8】\n`;
+            html += `${'─'.repeat(30)}\n`;
+            html += top8Cold.map(([num, freq]) => `${num.padStart(2, '0')}(${freq}次)`).join(', ') + '\n\n';
+            
+            html += `【最久未開號碼】\n`;
+            html += `${'─'.repeat(30)}\n`;
+            html += top4Waiting.map(([num, days]) => `${num.padStart(2, '0')}(${Math.floor(days)}期)`).join(', ') + '\n\n';
+            
+            html += `【特別號分析】\n`;
+            html += `${'─'.repeat(30)}\n`;
+            html += `熱門：${stats.hotSpecials.slice(0, 3).map(([num, freq]) => `${num.padStart(2, '0')}(${freq}次)`).join(', ')}\n`;
+            html += `冷門：${stats.coldSpecials.slice(0, 3).map(([num, freq]) => `${num.padStart(2, '0')}(${freq}次)`).join(', ')}`;
+            
+            coldStats.textContent = html;
+        }
+
+        // 生成推薦號碼
+        function generateRecommendations(stats, mode) {
+            const recommendations = [];
+            
+            for (let i = 0; i < 5; i++) {
+                const selected = selectNumbers(stats, mode);
+                const special = selectSpecialNumber(stats, mode, selected);
+                const analysis = analyzeCombination(selected, special, stats);
+                
+                recommendations.push({
+                    numbers: selected,
+                    special: special,
+                    analysis: analysis,
+                    score: analysis.score
+                });
+            }
+            
+            // 按評分排序
+            recommendations.sort((a, b) => b.score - a.score);
+            
+            // 顯示推薦結果
+            displayRecommendations(recommendations, mode);
+        }
+
+        // 選擇號碼
+        function selectNumbers(stats, mode) {
+            const weights = getWeightConfig(mode);
+            const selected = [];
+            const numberFreq = Object.fromEntries(stats.hotNumbers);
+            const longWaiting = Object.fromEntries(stats.longWaiting);
+            const maxFreq = Math.max(...Object.values(numberFreq));
+            
+            let attempts = 0;
+            while (selected.length < 6 && attempts < 100) {
+                attempts++;
+                const num = weightedRandomSelect(stats, weights, selected, numberFreq, longWaiting, maxFreq, mode);
+                
+                if (!selected.includes(num) && isValidCombination(selected, num, stats)) {
+                    selected.push(num);
+                }
+            }
+            
+            // 如果選不滿，隨機補充
+            while (selected.length < 6) {
+                const num = Math.floor(Math.random() * 49) + 1;
+                if (!selected.includes(num)) {
+                    selected.push(num);
+                }
+            }
+            
+            return selected.sort((a, b) => a - b);
+        }
+
+        // 加權隨機選擇
+        function weightedRandomSelect(stats, weights, selected, numberFreq, longWaiting, maxFreq, mode) {
+            const allWeights = [];
+            
+            for (let num = 1; num <= 49; num++) {
+                if (selected.includes(num)) {
+                    allWeights.push(0);
+                    continue;
+                }
+                
+                const freq = numberFreq[num] || 0;
+                const waiting = longWaiting[num] || 0;
+                const zoneIndex = Math.min(Math.floor((num - 1) / 10), 4);
+                
+                let freqWeight = mode === '冷門型' ? 
+                    (1 - freq / maxFreq) * weights.freq : 
+                    (freq / maxFreq) * weights.freq;
+                
+                const zoneWeight = (1 - stats.zoneDistribution[zoneIndex]) * weights.zone;
+                
+                let oddEvenWeight = weights.oddEven;
+                if (stats.oddEvenRatio > 1.2 && num % 2 === 0) oddEvenWeight *= 1.5;
+                else if (stats.oddEvenRatio < 0.8 && num % 2 === 1) oddEvenWeight *= 1.5;
+                
+                const waitingWeight = Math.min(waiting / 30, 1) * weights.waiting;
+                
+                let sizeWeight = weights.size;
+                if (stats.highLowRatio > 1.2 && num <= 25) sizeWeight *= 1.3;
+                else if (stats.highLowRatio < 0.8 && num > 25) sizeWeight *= 1.3;
+                
+                const randomWeight = Math.random() * weights.random;
+                
+                const totalWeight = Math.max(freqWeight + zoneWeight + oddEvenWeight + waitingWeight + sizeWeight + randomWeight, 0.01);
+                allWeights.push(totalWeight);
+            }
+            
+            // 加權隨機選擇
+            const totalWeight = allWeights.reduce((a, b) => a + b, 0);
+            let random = Math.random() * totalWeight;
+            
+            for (let i = 0; i < allWeights.length; i++) {
+                random -= allWeights[i];
+                if (random <= 0) {
+                    return i + 1;
+                }
+            }
+            
+            return Math.floor(Math.random() * 49) + 1;
+        }
+
+        // 獲取權重配置
+        function getWeightConfig(mode) {
+            const configs = {
+                "保守型": { freq: 0.5, zone: 0.3, oddEven: 0.3, waiting: 0.1, size: 0.2, random: 0.05 },
+                "平衡型": { freq: 0.35, zone: 0.3, oddEven: 0.25, waiting: 0.2, size: 0.25, random: 0.1 },
+                "激進型": { freq: 0.2, zone: 0.2, oddEven: 0.2, waiting: 0.3, size: 0.2, random: 0.3 },
+                "冷門型": { freq: 0.1, zone: 0.3, oddEven: 0.25, waiting: 0.5, size: 0.2, random: 0.15 },
+                "熱門型": { freq: 0.6, zone: 0.2, oddEven: 0.2, waiting: 0.05, size: 0.2, random: 0.05 }
+            };
+            return configs[mode] || configs["平衡型"];
+        }
+
+        // 檢查組合是否有效
+        function isValidCombination(selected, newNum, stats) {
+            if (selected.length === 0) return true;
+            
+            const tooCloseCount = selected.filter(n => Math.abs(n - newNum) <= 1).length;
+            if (tooCloseCount > 2) return false;
+            
+            const tempCombination = [...selected, newNum];
+            const zones = [0, 0, 0, 0, 0];
+            tempCombination.forEach(n => {
+                const zoneIndex = Math.min(Math.floor((n - 1) / 10), 4);
+                zones[zoneIndex]++;
+            });
+            
+            const nonZeroZones = zones.filter(z => z > 0).length;
+            if (nonZeroZones < 2 && tempCombination.length >= 4) return false;
+            
+            return true;
+        }
+
+        // 選擇特別號
+        function selectSpecialNumber(stats, mode, selectedNumbers) {
+            const specialFreq = Object.fromEntries(stats.hotSpecials);
+            const candidates = [];
+            
+            for (let i = 1; i <= 49; i++) {
+                if (!selectedNumbers.includes(i)) {
+                    candidates.push(i);
+                }
+            }
+            
+            if (candidates.length === 0) {
+                return Math.floor(Math.random() * 49) + 1;
+            }
+            
+            if (mode === '熱門型') {
+                const weights = candidates.map(n => specialFreq[n] || 1);
+                return weightedRandom(candidates, weights);
+            } else if (mode === '冷門型') {
+                const weights = candidates.map(n => 1 / ((specialFreq[n] || 0) + 1));
+                return weightedRandom(candidates, weights);
+            } else {
+                return candidates[Math.floor(Math.random() * candidates.length)];
+            }
+        }
+
+        // 加權隨機
+        function weightedRandom(items, weights) {
+            const totalWeight = weights.reduce((a, b) => a + b, 0);
+            let random = Math.random() * totalWeight;
+            
+            for (let i = 0; i < items.length; i++) {
+                random -= weights[i];
+                if (random <= 0) {
+                    return items[i];
+                }
+            }
+            
+            return items[0];
+        }
+
+        // 分析組合
+        function analyzeCombination(numbers, special, stats) {
+            const analysis = {};
+            
+            analysis.oddCount = numbers.filter(n => n % 2 === 1).length;
+            analysis.highCount = numbers.filter(n => n > 25).length;
+            analysis.sum = numbers.reduce((a, b) => a + b, 0);
+            
+            const zones = [0, 0, 0, 0, 0];
+            numbers.forEach(n => {
+                const zoneIndex = Math.min(Math.floor((n - 1) / 10), 4);
+                zones[zoneIndex]++;
+            });
+            analysis.zones = zones;
+            
+            // 計算評分
+            let score = 0;
+            const reasons = [];
+            
+            // 奇偶平衡
+            const oddRatio = analysis.oddCount / 6;
+            if (oddRatio >= 0.4 && oddRatio <= 0.6) {
+                score += 20;
+                reasons.push('奇偶平衡');
+            } else if (oddRatio >= 0.33 && oddRatio <= 0.67) {
+                score += 15;
+            } else {
+                score += 5;
+            }
+            
+            // 大小平衡
+            const highRatio = analysis.highCount / 6;
+            if (highRatio >= 0.4 && highRatio <= 0.6) {
+                score += 20;
+                reasons.push('大小平衡');
+            } else if (highRatio >= 0.33 && highRatio <= 0.67) {
+                score += 15;
+            } else {
+                score += 5;
+            }
+            
+            // 區間分布
+            const nonZeroZones = zones.filter(z => z > 0).length;
+            if (nonZeroZones >= 4) {
+                score += 20;
+                reasons.push('區間分布均勻');
+            } else if (nonZeroZones >= 3) {
+                score += 15;
+            } else {
+                score += 8;
+            }
+            
+            // 和值
+            if (analysis.sum >= 120 && analysis.sum <= 180) {
+                score += 15;
+                reasons.push('和值適中');
+            } else if (analysis.sum >= 100 && analysis.sum <= 200) {
+                score += 10;
+            } else {
+                score += 5;
+            }
+            
+            // 連號
+            const sorted = [...numbers].sort((a, b) => a - b);
+            let consecutivePairs = 0;
+            for (let i = 0; i < sorted.length - 1; i++) {
+                if (sorted[i + 1] - sorted[i] === 1) consecutivePairs++;
+            }
+            if (consecutivePairs >= 1 && consecutivePairs <= 2) {
+                score += 10;
+                reasons.push('適度連號');
+            } else if (consecutivePairs === 0) {
+                score += 5;
+            }
+            
+            // 分散度
+            const spread = sorted[sorted.length - 1] - sorted[0];
+            if (spread >= 25 && spread <= 40) {
+                score += 10;
+                reasons.push('號碼分散適中');
+            } else if (spread >= 20 && spread <= 45) {
+                score += 7;
+            }
+            
+            analysis.score = Math.min(score, 100);
+            analysis.reasons = reasons;
+            
+            return analysis;
+        }
+
+        // 顯示推薦結果
+        function displayRecommendations(recommendations, mode) {
+            const resultsDiv = document.getElementById('recommendResults');
+            
+            let html = `╔${'═'.repeat(58)}╗\n`;
+            html += `║${' '.repeat(15)}${mode}推薦策略${' '.repeat(15)}║\n`;
+            html += `╚${'═'.repeat(58)}╝\n\n`;
+            
+            recommendations.forEach((rec, i) => {
+                const numbersStr = rec.numbers.map(n => n.toString().padStart(2, '0')).join('  ');
+                const analysis = rec.analysis;
+                const score = rec.score;
+                
+                let scoreMark = score >= 80 ? '⭐⭐⭐' : (score >= 60 ? '⭐⭐' : '⭐');
+                
+                html += `┌${'─'.repeat(58)}┐\n`;
+                html += `│ 【第${i + 1}組推薦】${scoreMark} 評分：${score.toFixed(1)}/100\n`;
+                html += `├${'─'.repeat(58)}┤\n`;
+                html += `│ 主號碼：${numbersStr}\n`;
+                html += `│ 特別號：${rec.special.toString().padStart(2, '0')}\n`;
+                html += `├${'─'.repeat(58)}┤\n`;
+                html += `│ 📊 統計分析：\n`;
+                html += `│   • 奇偶比：${analysis.oddCount}奇 ${6 - analysis.oddCount}偶\n`;
+                html += `│   • 大小比：${analysis.highCount}大 ${6 - analysis.highCount}小\n`;
+                html += `│   • 區間分布：${analysis.zones.join(' ')}\n`;
+                html += `│   • 和值：${analysis.sum}\n`;
+                
+                if (analysis.reasons.length > 0) {
+                    html += `│\n│ 💡 推薦理由：\n`;
+                    analysis.reasons.slice(0, 3).forEach(reason => {
+                        html += `│   ✓ ${reason}\n`;
+                    });
+                }
+                
+                html += `└${'─'.repeat(58)}┘\n\n`;
+            });
+            
+            html += `╔${'═'.repeat(58)}╗\n`;
+            html += `║${' '.repeat(18)}策略說明${' '.repeat(18)}║\n`;
+            html += `╚${'═'.repeat(58)}╝\n`;
+            html += `  ${strategyDescriptions[mode]}\n`;
+            
+            resultsDiv.textContent = html;
+        }
+
+        // 頁面載入時初始化
+        window.addEventListener('load', function() {
+            console.log('台灣大樂透號碼分析系統已載入');
+        });
+    </script>
+</body>
+</html>
