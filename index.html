@@ -5,12 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌟 奇幻乘法冒險 🌟</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff9a9e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="奇幻乘法冒險">
+    <link rel="apple-touch-icon" href="icon-512.png">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --font-main: 'Nunito', 'Microsoft JhengHei', sans-serif;
-            --primary-color: #ff9a9e;
+            --primary: #ff9a9e;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
@@ -25,17 +35,14 @@
             overflow-x: hidden;
             position: relative;
             user-select: none;
-            /* 防止小朋友亂選文字 */
         }
 
-        /* 統一按鈕動畫與預設樣式 */
         button {
             font-family: var(--font-main);
             outline: none;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 動態背景氣泡 */
         .bg-bubbles {
             position: absolute;
             top: 0;
@@ -46,13 +53,13 @@
             overflow: hidden;
             margin: 0;
             padding: 0;
+            list-style: none;
         }
 
         .bg-bubbles li {
             position: absolute;
-            list-style: none;
             display: block;
-            background-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.4);
             bottom: -160px;
             border-radius: 50%;
             animation: floatUp 25s infinite linear;
@@ -62,7 +69,7 @@
             left: 10%;
             width: 80px;
             height: 80px;
-            animation-duration: 15s;
+            animation-duration: 15s
         }
 
         .bg-bubbles li:nth-child(2) {
@@ -70,14 +77,14 @@
             width: 30px;
             height: 30px;
             animation-delay: 2s;
-            animation-duration: 17s;
+            animation-duration: 17s
         }
 
         .bg-bubbles li:nth-child(3) {
             left: 25%;
             width: 50px;
             height: 50px;
-            animation-delay: 4s;
+            animation-delay: 4s
         }
 
         .bg-bubbles li:nth-child(4) {
@@ -85,14 +92,14 @@
             width: 60px;
             height: 60px;
             animation-duration: 22s;
-            background-color: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.25)
         }
 
         .bg-bubbles li:nth-child(5) {
             left: 70%;
             width: 45px;
             height: 45px;
-            animation-delay: 1s;
+            animation-delay: 1s
         }
 
         .bg-bubbles li:nth-child(6) {
@@ -100,14 +107,14 @@
             width: 120px;
             height: 120px;
             animation-delay: 3s;
-            background-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.2)
         }
 
         .bg-bubbles li:nth-child(7) {
             left: 32%;
             width: 160px;
             height: 160px;
-            animation-delay: 7s;
+            animation-delay: 7s
         }
 
         .bg-bubbles li:nth-child(8) {
@@ -115,7 +122,7 @@
             width: 20px;
             height: 20px;
             animation-delay: 15s;
-            animation-duration: 40s;
+            animation-duration: 40s
         }
 
         .bg-bubbles li:nth-child(9) {
@@ -124,29 +131,28 @@
             height: 10px;
             animation-delay: 2s;
             animation-duration: 40s;
-            background-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.3)
         }
 
         .bg-bubbles li:nth-child(10) {
             left: 90%;
             width: 160px;
             height: 160px;
-            animation-delay: 11s;
+            animation-delay: 11s
         }
 
         @keyframes floatUp {
             0% {
                 transform: translateY(0) rotate(0);
-                opacity: 1;
+                opacity: 1
             }
 
             100% {
                 transform: translateY(-1200px) rotate(600deg);
-                opacity: 0;
+                opacity: 0
             }
         }
 
-        /* 畫面切換 */
         .screen {
             display: none;
             width: 100%;
@@ -165,16 +171,15 @@
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(20px)
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0)
             }
         }
 
-        /* 頂部導航鈕 */
         .top-nav {
             width: 100%;
             display: flex;
@@ -202,11 +207,6 @@
             transform: translateY(-3px);
         }
 
-        .back-btn:active {
-            transform: translateY(1px);
-        }
-
-        /* ====== 首頁 ====== */
         .header {
             text-align: center;
             margin-top: 10vh;
@@ -220,26 +220,27 @@
         }
 
         .subtitle {
-            font-size: 1.5rem;
+            font-size: 2rem;
             color: #fff;
-            background: var(--primary-color);
-            padding: 0.5rem 1.5rem;
-            border-radius: 30px;
+            background: var(--primary);
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
             display: inline-block;
             box-shadow: 0 4px 10px rgba(255, 154, 158, 0.4);
             margin-bottom: 3rem;
+            line-height: 1.5;
         }
 
         .menu-btns {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         .menu-btn {
-            font-size: 2rem;
-            padding: 2rem 4rem;
+            font-size: 1.8rem;
+            padding: 1.8rem 2.8rem;
             border-radius: 50px;
             border: none;
             cursor: pointer;
@@ -249,6 +250,15 @@
             flex-direction: column;
             align-items: center;
             gap: 1rem;
+            line-height: 1.4;
+        }
+
+        .menu-btn .icon {
+            font-size: 3.5rem;
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-10px) scale(1.05);
         }
 
         .menu-btn.learn {
@@ -265,25 +275,37 @@
             border-bottom: 8px solid #74b9ff;
         }
 
-        .menu-btn .icon {
-            font-size: 4rem;
+        .menu-btn.flip-mode {
+            background: #fff;
+            color: #6c5ce7;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
+            border-bottom: 8px solid #a29bfe;
         }
 
-        .menu-btn:hover {
-            transform: translateY(-10px) scale(1.05);
+        .menu-btn.speed-mode {
+            background: #fff;
+            color: #00b894;
+            box-shadow: 0 10px 20px rgba(0, 184, 148, 0.2);
+            border-bottom: 8px solid #55efc4;
         }
 
-        .menu-btn:active {
-            transform: translateY(2px);
-            border-bottom-width: 0;
-            margin-top: 8px;
+        .menu-btn.table-mode {
+            background: #fff;
+            color: #e17055;
+            box-shadow: 0 10px 20px rgba(225, 112, 85, 0.2);
+            border-bottom: 8px solid #fab1a0;
         }
 
-        /* ====== 學習選單 (選動物) ====== */
+        .menu-btn small {
+            font-size: 1.2rem;
+            color: #636e72;
+            font-weight: 700;
+        }
+
         .learn-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
             width: 100%;
         }
 
@@ -297,6 +319,7 @@
             border: 4px solid #fff;
             transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
+            line-height: 1.5;
         }
 
         .learn-card:hover {
@@ -304,11 +327,9 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
         }
 
-
-        /* ====== 互動式學習 (全新魔法黑板) ====== */
+        /* 黑板 */
         .blackboard-container {
             background: #2d3436;
-            /* 變回黑板風以凸顯主角顏色 */
             border-radius: 40px;
             border: 12px solid #b2bec3;
             padding: 2rem;
@@ -320,16 +341,14 @@
             overflow: hidden;
         }
 
-        /* 黑板上方的粉筆字標題 */
         .chalk-title {
             font-size: 2.5rem;
             color: #f5f6fa;
-            font-family: 'Comic Sans MS', 'Nunito', cursive;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            line-height: 1.6;
         }
 
-        /* 乘法題目與拖曳區 */
         .puzzle-area {
             display: flex;
             flex-direction: column;
@@ -351,7 +370,6 @@
             gap: 1rem;
         }
 
-        /* 裝載動物的籃子 (視覺化) */
         .baskets-container {
             display: flex;
             flex-wrap: wrap;
@@ -384,7 +402,6 @@
             transform: scale(1.05);
         }
 
-        /* 產生出來等待被點擊/分配的動物 */
         .waiting-animals {
             display: flex;
             justify-content: center;
@@ -412,47 +429,46 @@
             margin: 2px;
         }
 
-        /* 操作提示 */
         .hint-text {
-            font-size: 1.8rem;
+            font-size: 2rem;
             color: #ffeaa7;
             font-weight: bold;
             margin-bottom: 1rem;
             animation: pulse 1.5s infinite;
+            line-height: 1.5;
         }
 
         @keyframes pulse {
             0% {
                 transform: scale(1);
-                opacity: 0.8;
+                opacity: 0.8
             }
 
             50% {
                 transform: scale(1.05);
-                opacity: 1;
+                opacity: 1
             }
 
             100% {
                 transform: scale(1);
-                opacity: 0.8;
+                opacity: 0.8
             }
         }
 
         @keyframes popIn {
             0% {
-                transform: scale(0);
+                transform: scale(0)
             }
 
             80% {
-                transform: scale(1.2);
+                transform: scale(1.2)
             }
 
             100% {
-                transform: scale(1);
+                transform: scale(1)
             }
         }
 
-        /* 按鈕區 */
         .control-btns {
             display: flex;
             gap: 1rem;
@@ -461,9 +477,9 @@
         }
 
         .big-action-btn {
-            font-size: 1.8rem;
-            padding: 1rem 2.5rem;
-            border-radius: 30px;
+            font-size: 2rem;
+            padding: 1.5rem 3rem;
+            border-radius: 40px;
             border: none;
             cursor: pointer;
             font-weight: bold;
@@ -472,7 +488,7 @@
             box-shadow: 0 6px 0px #019a96;
             transition: all 0.2s;
             display: none;
-            /* 預設隱藏，破關才顯示 */
+            line-height: 1.5;
         }
 
         .big-action-btn:active {
@@ -480,8 +496,7 @@
             box-shadow: 0 0px 0px transparent;
         }
 
-
-        /* ====== 遊戲模式 ====== */
+        /* 遊戲模式 */
         .game-container {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
@@ -499,13 +514,14 @@
         .stats {
             display: flex;
             justify-content: space-around;
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 900;
             margin-bottom: 2rem;
             background: #fff;
-            padding: 1.5rem;
+            padding: 2rem;
             border-radius: 20px;
             box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.05);
+            line-height: 1.5;
         }
 
         .score-box {
@@ -535,7 +551,7 @@
             font-size: 4rem;
             padding: 1.5rem;
             border-radius: 30px;
-            border: none;
+            border: 4px solid #fff;
             cursor: pointer;
             transition: transform 0.2s;
             font-weight: 900;
@@ -543,33 +559,31 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 8px 0px rgba(0, 0, 0, 0.15);
-            border: 4px solid #fff;
+        }
+
+        .option-btn:nth-child(1) {
+            background: #ffeaa7;
+            box-shadow: 0 8px 0 #fdcb6e
+        }
+
+        .option-btn:nth-child(2) {
+            background: #81ecec;
+            box-shadow: 0 8px 0 #00cec9
+        }
+
+        .option-btn:nth-child(3) {
+            background: #fab1a0;
+            box-shadow: 0 8px 0 #e17055
+        }
+
+        .option-btn:nth-child(4) {
+            background: #a29bfe;
+            box-shadow: 0 8px 0 #6c5ce7
         }
 
         .option-btn:active {
             transform: translateY(8px);
             box-shadow: 0 0px 0px rgba(0, 0, 0, 0.15);
-        }
-
-        .option-btn:nth-child(1) {
-            background: #ffeaa7;
-            box-shadow: 0 8px 0px #fdcb6e;
-        }
-
-        .option-btn:nth-child(2) {
-            background: #81ecec;
-            box-shadow: 0 8px 0px #00cec9;
-        }
-
-        .option-btn:nth-child(3) {
-            background: #fab1a0;
-            box-shadow: 0 8px 0px #e17055;
-        }
-
-        .option-btn:nth-child(4) {
-            background: #a29bfe;
-            box-shadow: 0 8px 0px #6c5ce7;
         }
 
         .shake {
@@ -578,23 +592,23 @@
 
         @keyframes shake {
             0% {
-                transform: translateX(0);
+                transform: translateX(0)
             }
 
             25% {
-                transform: translateX(-15px) rotate(-5deg);
+                transform: translateX(-15px) rotate(-5deg)
             }
 
             50% {
-                transform: translateX(15px) rotate(5deg);
+                transform: translateX(15px) rotate(5deg)
             }
 
             75% {
-                transform: translateX(-15px) rotate(-5deg);
+                transform: translateX(-15px) rotate(-5deg)
             }
 
             100% {
-                transform: translateX(0);
+                transform: translateX(0)
             }
         }
 
@@ -604,15 +618,15 @@
 
         @keyframes popOut {
             0% {
-                transform: scale(1);
+                transform: scale(1)
             }
 
             50% {
-                transform: scale(1.3);
+                transform: scale(1.3)
             }
 
             100% {
-                transform: scale(1);
+                transform: scale(1)
             }
         }
 
@@ -621,13 +635,14 @@
             top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 6rem;
+            font-size: 7rem;
             font-weight: 900;
             color: #ff9f43;
             text-shadow: 4px 4px 0 #fff;
             opacity: 0;
             pointer-events: none;
             z-index: 10;
+            line-height: 1.5;
         }
 
         .feedback.show {
@@ -637,30 +652,293 @@
         @keyframes floatUpWord {
             0% {
                 opacity: 0;
-                transform: translate(-50%, -50%) scale(0.5);
+                transform: translate(-50%, -50%) scale(0.5)
             }
 
             20% {
                 opacity: 1;
-                transform: translate(-50%, -60%) scale(1.2) rotate(5deg);
+                transform: translate(-50%, -60%) scale(1.2) rotate(5deg)
             }
 
             80% {
                 opacity: 1;
-                transform: translate(-50%, -80%) scale(1) rotate(-5deg);
+                transform: translate(-50%, -80%) scale(1) rotate(-5deg)
             }
 
             100% {
                 opacity: 0;
-                transform: translate(-50%, -100%) scale(1);
+                transform: translate(-50%, -100%) scale(1)
             }
+        }
+
+        /* ===== 記憶翻牌 ===== */
+        .flip-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            width: 100%;
+            max-width: 720px;
+            margin: 1.5rem auto;
+        }
+
+        .flip-card {
+            perspective: 600px;
+            height: 120px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner,
+        .flip-card.matched .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card.matched .flip-back {
+            background: #00b894;
+            border-color: #00b894;
+            color: #fff;
+            box-shadow: 0 6px 0 #00876d;
+        }
+
+        .flip-front,
+        .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+        }
+
+        .flip-front {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: #fff;
+            box-shadow: 0 6px 0 #4834d4;
+            font-size: 2.8rem;
+        }
+
+        .flip-back {
+            background: #fff;
+            border: 4px solid #a29bfe;
+            color: #2d3436;
+            transform: rotateY(180deg);
+            box-shadow: 0 6px 0 #a29bfe;
+        }
+
+        .flip-status {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== 快打挑戰 ===== */
+        .speed-wrap {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 40px;
+            padding: 2.5rem;
+            text-align: center;
+            max-width: 580px;
+            width: 100%;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .timer-bar-wrap {
+            background: #eee;
+            border-radius: 20px;
+            height: 22px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .timer-bar {
+            height: 100%;
+            border-radius: 20px;
+            background: linear-gradient(90deg, #00cec9, #0984e3);
+            transition: width 0.1s linear, background 0.5s;
+        }
+
+        .speed-q {
+            font-size: 5.5rem;
+            font-weight: 900;
+            color: #2d3436;
+            margin: 0.8rem 0;
+            letter-spacing: 4px;
+        }
+
+        .speed-inp {
+            font-size: 4rem;
+            font-weight: 900;
+            width: 160px;
+            text-align: center;
+            border: 5px solid #a29bfe;
+            border-radius: 20px;
+            padding: 0.4rem;
+            font-family: inherit;
+            color: #2d3436;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .speed-inp:focus {
+            border-color: #6c5ce7;
+        }
+
+        .speed-inp.c-flash {
+            background: #00b894;
+            color: #fff;
+            border-color: #00b894;
+        }
+
+        .speed-inp.w-flash {
+            background: #ff7675;
+            color: #fff;
+            border-color: #ff7675;
+        }
+
+        .speed-stats {
+            display: flex;
+            justify-content: space-around;
+            font-size: 2rem;
+            font-weight: 900;
+            margin-top: 1.5rem;
+        }
+
+        .sstat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sstat span {
+            font-size: 1.1rem;
+            color: #888;
+            font-weight: 700;
+        }
+
+        /* ===== 乘法填空 ===== */
+        .tbl-sel-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            max-width: 480px;
+            margin: 1rem auto;
+        }
+
+        .tbl-sel-btn {
+            font-size: 2rem;
+            font-weight: 900;
+            padding: 1.2rem;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            background: #fff;
+            color: #2d3436;
+            box-shadow: 0 6px 0 #b2bec3;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .tbl-sel-btn:hover {
+            transform: translateY(-4px);
+        }
+
+        .mult-table {
+            border-collapse: collapse;
+            margin: 1rem auto;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            overflow: hidden;
+            font-size: 1.8rem;
+        }
+
+        .mult-table th {
+            background: #6c5ce7;
+            color: #fff;
+            padding: 0.6rem 1rem;
+            font-size: 1.4rem;
+        }
+
+        .mult-table td {
+            padding: 0.5rem 0.8rem;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .tblank {
+            width: 70px;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-align: center;
+            border: 3px solid #a29bfe;
+            border-radius: 10px;
+            padding: 0.3rem;
+            font-family: inherit;
+            color: #2d3436;
+            background: #fff;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .tblank:focus {
+            border-color: #6c5ce7;
+        }
+
+        .tblank.tc {
+            background: #00b894;
+            color: #fff;
+            border-color: #00b894;
+        }
+
+        .tblank.tw {
+            background: #ff7675;
+            color: #fff;
+            border-color: #ff7675;
+        }
+
+        .check-tbl-btn {
+            font-size: 2rem;
+            padding: 1.2rem 3rem;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-weight: 900;
+            background: #00cec9;
+            color: #fff;
+            box-shadow: 0 6px 0 #019a96;
+            margin-top: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .check-tbl-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 transparent;
+        }
+
+        .screen-title {
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1.5rem;
+            font-weight: 900;
         }
     </style>
 </head>
 
 <body>
-
-    <!-- 背景泡泡 -->
     <ul class="bg-bubbles">
         <li></li>
         <li></li>
@@ -677,92 +955,170 @@
     <!-- 首頁 -->
     <div id="home" class="screen active">
         <div class="header">
-            <h1>🌟 奇幻乘法冒險 🌟</h1>
+            <h1>奇幻乘法冒險</h1>
             <div class="subtitle">專為聰明小寶貝設計的魔法算術！</div>
         </div>
         <div class="menu-btns">
-            <button class="menu-btn learn" onclick="showScreen('learn-menu')">
-                <span class="icon">🐾</span>魔法動物派對
-                <span style="font-size: 1.2rem; color: #636e72;">把動物裝進籃子學乘法！</span>
+            <button class="menu-btn learn" onclick="openMenu('interactive')">
+                <span class="icon">🐾</span><span>魔法動物派對</span><small>把動物裝進籃子學乘法！</small>
+            </button>
+            <button class="menu-btn flip-mode" onclick="showScreen('flip-screen')">
+                <span class="icon">🃏</span><span>記憶翻牌</span><small>配對題目與答案！</small>
+            </button>
+            <button class="menu-btn speed-mode" onclick="startSpeed()">
+                <span class="icon">⚡</span><span>快打挑戰</span><small>限時輸入答案！</small>
+            </button>
+            <button class="menu-btn table-mode" onclick="showScreen('table-screen')">
+                <span class="icon">📊</span><span>乘法填空</span><small>填滿整張乘法表！</small>
+            </button>
+            <button class="menu-btn learn" onclick="openMenu('read')"
+                style="color:#6c5ce7;box-shadow:0 10px 20px rgba(108,92,231,0.2);border-bottom:8px solid #a29bfe;">
+                <span class="icon">🎤</span><span>聽聽乘法</span><small>點了會發出聲音！</small>
             </button>
             <button class="menu-btn game" onclick="showScreen('game')">
-                <span class="icon">🎮</span>超級闖關挑戰
-                <span style="font-size: 1.2rem; color: #636e72;">挑戰連擊拿高分！</span>
+                <span class="icon">🎮</span><span>超級闖關</span><small>挑戰連擊拿高分！</small>
             </button>
         </div>
     </div>
 
-    <!-- 學習模式：選擇要學習的數字 -->
+    <!-- 選動物選單 -->
     <div id="learn-menu" class="screen">
-        <div class="top-nav">
-            <button class="back-btn" onclick="showScreen('home')">⬅️ 回到首頁</button>
-        </div>
-        <h2 style="font-size: 3rem; color: #fff; text-shadow: 2px 2px 5px rgba(0,0,0,0.2); margin-bottom: 2rem;">
-            想參加誰的派對呢？</h2>
+        <div class="top-nav"><button class="back-btn" onclick="showScreen('home')">⬅️ 回首頁</button></div>
+        <h2 class="screen-title">想參加誰的派對呢？</h2>
         <div class="learn-grid" id="learn-menu-container"></div>
     </div>
 
-    <!-- 學習模式：裝籃子互動教學 -->
+    <!-- 動物裝籃子 -->
     <div id="learn-interactive" class="screen">
-        <div class="top-nav">
-            <button class="back-btn" onclick="showScreen('learn-menu')">⬅️ 換個小動物</button>
-        </div>
-
+        <div class="top-nav"><button class="back-btn" onclick="showScreen('learn-menu')">⬅️ 換個小動物</button></div>
         <div class="blackboard-container">
-            <div id="learn-subtitle" class="chalk-title">🐹 水豚君的派對準備！</div>
-
+            <div id="learn-subtitle" class="chalk-title"></div>
             <div class="puzzle-area">
                 <div class="equation-display">
-                    <span id="eq-f1" style="color:#ffeaa7;">2</span>
-                    <span style="color:#b2bec3;">×</span>
-                    <span id="eq-f2" style="color:#81ecec;">1</span>
-                    <span style="color:#b2bec3;">=</span>
-                    <span id="eq-ans" style="color:#ff7675;">?</span>
+                    <span id="eq-f1" style="color:#ffeaa7">2</span>
+                    <span style="color:#b2bec3">×</span>
+                    <span id="eq-f2" style="color:#81ecec">1</span>
+                    <span style="color:#b2bec3">=</span>
+                    <span id="eq-ans" style="color:#ff7675">?</span>
                 </div>
-
-                <div id="hint-text" class="hint-text">點擊小動物，把牠們裝進發光的籃子裡！👆</div>
-
-                <!-- 裝動物的籃子區 -->
+                <div id="hint-text" class="hint-text"></div>
                 <div class="baskets-container" id="baskets-container"></div>
-
-                <!-- 等待被點擊的動物區 -->
                 <div class="waiting-animals" id="waiting-animals"></div>
             </div>
-
             <div class="control-btns">
-                <button id="next-stage-btn" class="big-action-btn" onclick="nextLearnStage()">下一關！➡️</button>
+                <button id="next-stage-btn" class="big-action-btn" onclick="nextLearnStage()"></button>
             </div>
+        </div>
+    </div>
+
+    <!-- 聽聽乘法 -->
+    <div id="read-interactive" class="screen">
+        <div class="top-nav"><button class="back-btn" onclick="showScreen('learn-menu')">⬅️ 換個小動物</button></div>
+        <div class="blackboard-container" style="background:#a29bfe;border-color:#fff;">
+            <div id="read-title" class="chalk-title"></div>
+            <div id="read-grid-container"
+                style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:2rem auto;max-width:600px;">
+            </div>
+        </div>
+    </div>
+
+    <!-- 記憶翻牌 -->
+    <div id="flip-screen" class="screen">
+        <div class="top-nav"><button class="back-btn" onclick="showScreen('home')">⬅️ 回首頁</button></div>
+        <h2 class="screen-title">🃏 記憶翻牌</h2>
+        <div id="flip-status" class="flip-status">找出所有配對！</div>
+        <div class="flip-grid" id="flip-grid"></div>
+        <button class="big-action-btn" id="flip-restart-btn" onclick="initFlipGame()"
+            style="display:inline-block;margin-top:1rem;">🔄 再玩一次</button>
+    </div>
+
+    <!-- 快打挑戰 -->
+    <div id="speed-screen" class="screen">
+        <div class="top-nav"><button class="back-btn" onclick="stopSpeed()">⬅️ 回首頁</button></div>
+        <h2 class="screen-title">⚡ 快打挑戰</h2>
+        <div class="speed-wrap">
+            <div class="timer-bar-wrap">
+                <div class="timer-bar" id="timer-bar"></div>
+            </div>
+            <div class="speed-q" id="speed-q">? × ? = ?</div>
+            <input class="speed-inp" id="speed-inp" type="number" inputmode="numeric" placeholder="?"
+                autocomplete="off">
+            <div class="speed-stats">
+                <div class="sstat"><strong id="sp-score">0</strong><span>⭐ 分數</span></div>
+                <div class="sstat"><strong id="sp-correct">0</strong><span>✅ 答對</span></div>
+                <div class="sstat"><strong id="sp-wrong">0</strong><span>❌ 答錯</span></div>
+                <div class="sstat"><strong id="sp-time">60</strong><span>⏱ 秒</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 乘法填空 -->
+    <div id="table-screen" class="screen">
+        <div class="top-nav"><button class="back-btn" onclick="showScreen('home')">⬅️ 回首頁</button></div>
+        <h2 class="screen-title">📊 乘法填空表</h2>
+        <div id="tbl-sel-area">
+            <p style="font-size:2rem;color:#fff;font-weight:900;">選擇要練習的數字：</p>
+            <div class="tbl-sel-grid" id="tbl-sel-grid"></div>
+        </div>
+        <div id="tbl-area" style="display:none;width:100%;text-align:center;">
+            <div id="tbl-score" style="font-size:2rem;color:#fff;font-weight:900;margin-bottom:1rem;"></div>
+            <div style="overflow-x:auto;">
+                <table class="mult-table" id="mult-table"></table>
+            </div>
+            <button class="check-tbl-btn" onclick="checkTable()">✅ 檢查答案</button>
+            <button class="check-tbl-btn" onclick="resetTable()"
+                style="background:#e17055;box-shadow:0 6px 0 #d63031;margin-left:1rem;">🔄 重新填</button>
         </div>
     </div>
 
     <!-- 遊戲模式 -->
     <div id="game" class="screen">
-        <div class="top-nav">
-            <button class="back-btn" onclick="showScreen('home')">⬅️ 結束挑戰</button>
-        </div>
+        <div class="top-nav"><button class="back-btn" onclick="showScreen('home')">⬅️ 結束挑戰</button></div>
         <div class="game-container">
             <div class="stats">
                 <div class="score-box">⭐ 分數: <span id="score">0</span></div>
                 <div class="combo-box">🔥 連擊: <span id="combo">0</span></div>
             </div>
-            <div class="question-box" id="question-text">
-                2 × 3 = ?
-            </div>
+            <div class="question-box" id="question-text">2 × 3 = ?</div>
             <div class="options" id="options-container"></div>
-            <div id="feedback-msg" class="feedback">好棒！🎉</div>
+            <div id="feedback-msg" class="feedback"></div>
         </div>
     </div>
 
     <script>
+        // === 音效 ===
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, dur, vol = 0.1) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+            o.type = type; o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            g.gain.setValueAtTime(vol, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + dur);
+        }
+        const sfx = {
+            click: () => playTone(600, 'sine', 0.1, 0.05),
+            pop: () => { playTone(400, 'sine', 0.1, 0.1); setTimeout(() => playTone(600, 'sine', 0.1, 0.1), 50); },
+            correct: () => { playTone(523, 'sine', 0.1, 0.1); setTimeout(() => playTone(659, 'sine', 0.1, 0.1), 100); setTimeout(() => playTone(784, 'sine', 0.2, 0.1), 200); },
+            wrong: () => { playTone(300, 'sawtooth', 0.2, 0.05); setTimeout(() => playTone(250, 'sawtooth', 0.3, 0.05), 150); },
+            tada: () => { playTone(523, 'square', 0.1, 0.05); setTimeout(() => playTone(659, 'square', 0.1, 0.05), 100); setTimeout(() => playTone(784, 'square', 0.1, 0.05), 200); setTimeout(() => playTone(1047, 'square', 0.4, 0.05), 300); }
+        };
+        document.addEventListener('click', e => {
+            if (e.target.tagName === 'BUTTON' && !e.target.classList.contains('option-btn') && e.target.id !== 'next-stage-btn') sfx.click();
+        });
+
+        function getImg(code) { return `<img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${code}.svg" draggable="false" style="width:1em;height:1em;vertical-align:-0.1em;pointer-events:none;">`; }
+
         const themes = [
-            { num: 2, color: '#ffb8b8', icon: '🐰', name: '小兔兔' },
-            { num: 3, color: '#bae1ff', icon: '🐧', name: '小企鵝' },
-            { num: 4, color: '#baffc9', icon: '🐢', name: '小烏龜' },
-            { num: 5, color: '#ffdfba', icon: '🐹', name: '水豚君' },
-            { num: 6, color: '#ffc6ff', icon: '🐰', name: '粉紅兔' },
-            { num: 7, color: '#81ecec', icon: '🐧', name: '冰企鵝' },
-            { num: 8, color: '#55efc4', icon: '🐢', name: '綠蠵龜' },
-            { num: 9, color: '#ffeaa7', icon: '🐹', name: '黃金水豚' }
+            { num: 1, color: '#f5cd79', code: '1f439', name: '水豚君' },
+            { num: 2, color: '#ffb8b8', code: '1f430', name: '兔兔' },
+            { num: 3, color: '#baffc9', code: '1f422', name: '烏龜' },
+            { num: 4, color: '#bae1ff', code: '1f427', name: '企鵝' },
+            { num: 5, color: '#ffdfba', code: '1f418', name: '大象' },
+            { num: 6, color: '#ffc6ff', code: '1f992', name: '長頸鹿' },
+            { num: 7, color: '#81ecec', code: '1f43c', name: '熊貓' },
+            { num: 8, color: '#55efc4', code: '1f436', name: '狗狗' },
+            { num: 9, color: '#ffeaa7', code: '1f431', name: '貓咪' }
         ];
 
         function showScreen(id) {
@@ -771,249 +1127,267 @@
             if (id === 'game') startGame();
         }
 
-        /* =====================================
-           🌟 全新互動學習模式 - 裝進籃子裡 🌟
-           ===================================== */
-        let teachTheme = null;
-        let teachMultiplier = 1; // 乘數 (籃子數量)
-        let currentTargetBasket = 0; // 目前正在裝哪個籃子
-        let animalsInCurrentBasket = 0; // 目前這籃裝了幾隻
-
-        // 建立選單
+        // === 動物選單 ===
+        let currentMenuTarget = 'interactive';
+        function openMenu(target) { currentMenuTarget = target; showScreen('learn-menu'); }
         function generateLearnMenu() {
-            const container = document.getElementById('learn-menu-container');
-            container.innerHTML = '';
-
-            themes.forEach(theme => {
+            const c = document.getElementById('learn-menu-container'); c.innerHTML = '';
+            themes.forEach(t => {
                 const card = document.createElement('div');
-                card.className = 'learn-card';
-                card.onclick = () => initInteractiveLearn(theme);
-
-                let bColor = theme.color;
-                card.style.borderColor = bColor;
-
-                card.innerHTML = `
-                    <div style="font-size: 5rem; line-height: 1;">${theme.icon}</div>
-                    <h2 style="color: #2d3436; font-size: 2rem; margin: 10px 0;">${theme.num} 的派對</h2>
-                    <span style="background: ${bColor}; color:#4a4a4a; padding: 4px 12px; border-radius: 15px; font-weight:bold;">${theme.name}</span>
-                `;
-                container.appendChild(card);
+                card.className = 'learn-card'; card.style.borderColor = t.color;
+                card.innerHTML = `<div style="font-size:5rem;line-height:1;">${getImg(t.code)}</div><h2 style="color:#2d3436;font-size:2.2rem;margin:12px 0;">${t.num} 的派對</h2><span style="background:${t.color};color:#4a4a4a;padding:5px 16px;border-radius:20px;font-weight:bold;font-size:1.4rem;">${t.name}</span>`;
+                card.onclick = () => currentMenuTarget === 'interactive' ? initInteractiveLearn(t) : initReadMode(t);
+                c.appendChild(card);
             });
         }
 
-        // 初始化學習單元
-        function initInteractiveLearn(theme) {
-            teachTheme = theme;
-            teachMultiplier = 1;
-            showScreen('learn-interactive');
-            document.getElementById('learn-subtitle').innerText = `${teachTheme.icon} ${teachTheme.name} 的算術派對！`;
-            setupLearnStage();
+        // === 聽聽乘法 ===
+        function initReadMode(t) {
+            showScreen('read-interactive');
+            document.getElementById('read-title').innerHTML = `${getImg(t.code)} ${t.name} 發音卡片！`;
+            const c = document.getElementById('read-grid-container'); c.innerHTML = '';
+            for (let i = 1; i <= 9; i++) {
+                const btn = document.createElement('button');
+                btn.style.cssText = 'background:#fff;border:4px solid #a29bfe;border-radius:20px;padding:1.5rem 0.5rem;font-size:2rem;font-weight:bold;color:#2d3436;cursor:pointer;box-shadow:0 8px 0 #6c5ce7;transition:all 0.2s;font-family:inherit;';
+                btn.innerText = `${t.num} × ${i}`;
+                btn.onmousedown = () => { btn.style.transform = 'translateY(6px)'; btn.style.boxShadow = '0 0px 0 #6c5ce7'; };
+                btn.onmouseup = () => { btn.style.transform = 'translateY(0)'; btn.style.boxShadow = '0 8px 0 #6c5ce7'; };
+                btn.onclick = () => {
+                    sfx.click();
+                    const ans = t.num * i;
+                    btn.innerText = `${t.num} × ${i} = ${ans}`;
+                    btn.style.background = '#ffeaa7';
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        let txt = ans < 10 ? `${t.num} ${i} 得 ${ans}` : `${t.num} ${i} 等於 ${ans}`;
+                        const msg = new SpeechSynthesisUtterance(txt); msg.lang = 'zh-TW'; msg.rate = 0.9;
+                        window.speechSynthesis.speak(msg);
+                    }
+                };
+                c.appendChild(btn);
+            }
         }
 
-        // 設置當前關卡 (例如 2 x 3)
+        // === 裝籃子 ===
+        let teachTheme = null, teachMul = 1, curBasket = 0, animalsInBasket = 0;
+        function initInteractiveLearn(t) { teachTheme = t; teachMul = 1; showScreen('learn-interactive'); document.getElementById('learn-subtitle').innerHTML = `${getImg(t.code)} ${t.name} 的派對！`; setupLearnStage(); }
         function setupLearnStage() {
-            currentTargetBasket = 0;
-            animalsInCurrentBasket = 0;
-
+            curBasket = 0; animalsInBasket = 0;
             document.getElementById('eq-f1').innerText = teachTheme.num;
-            document.getElementById('eq-f2').innerText = teachMultiplier;
+            document.getElementById('eq-f2').innerText = teachMul;
             document.getElementById('eq-ans').innerText = '?';
             document.getElementById('eq-ans').style.color = '#ff7675';
-
-            document.getElementById('hint-text').innerText = `請點擊下方的 ${teachTheme.icon}，把它裝進發光的籃子裡！👆`;
+            document.getElementById('hint-text').innerHTML = `點擊下方的 ${getImg(teachTheme.code)}，把牠們裝進發光的籃子裡！👆`;
             document.getElementById('next-stage-btn').style.display = 'none';
-
-            // 繪製空籃子
-            const basketsDiv = document.getElementById('baskets-container');
-            basketsDiv.innerHTML = '';
-            for (let i = 0; i < teachMultiplier; i++) {
-                let bas = document.createElement('div');
-                bas.className = 'basket';
-                bas.id = `basket-${i}`;
-                basketsDiv.appendChild(bas);
-            }
-            highlightBasket(0); // 點亮第一個籃子
-
-            // 繪製等待被點擊的動物
-            const waitDiv = document.getElementById('waiting-animals');
-            waitDiv.innerHTML = '';
-            // 每個籃子需要 teachTheme.num 隻，總共產生需要數量的動物
-            let totalNeeded = teachTheme.num * teachMultiplier;
-            for (let i = 0; i < totalNeeded; i++) {
-                let animal = document.createElement('div');
-                animal.className = 'animal-item';
-                animal.innerText = teachTheme.icon;
-                animal.onclick = function () { moveToBasket(this); };
-                waitDiv.appendChild(animal);
+            const bDiv = document.getElementById('baskets-container'); bDiv.innerHTML = '';
+            for (let i = 0; i < teachMul; i++) { const b = document.createElement('div'); b.className = 'basket'; b.id = `basket-${i}`; bDiv.appendChild(b); }
+            highlightBasket(0);
+            const wDiv = document.getElementById('waiting-animals'); wDiv.innerHTML = '';
+            for (let i = 0; i < teachTheme.num * teachMul; i++) { const a = document.createElement('div'); a.className = 'animal-item'; a.innerHTML = getImg(teachTheme.code); a.onclick = function () { moveToBasket(this); }; wDiv.appendChild(a); }
+        }
+        function highlightBasket(i) { document.querySelectorAll('.basket').forEach(b => b.classList.remove('highlight')); const b = document.getElementById(`basket-${i}`); if (b) b.classList.add('highlight'); }
+        function moveToBasket(el) {
+            if (curBasket >= teachMul) return; sfx.pop();
+            const b = document.getElementById(`basket-${curBasket}`);
+            const a = document.createElement('div'); a.innerHTML = getImg(teachTheme.code); a.className = 'animal-item placed'; a.style.animation = 'popIn 0.2s';
+            b.appendChild(a); el.remove(); animalsInBasket++;
+            if (animalsInBasket >= teachTheme.num) {
+                animalsInBasket = 0; curBasket++;
+                b.classList.remove('highlight'); b.style.borderColor = '#00b894'; b.style.backgroundColor = 'rgba(0,184,148,0.2)'; b.classList.add('pop'); setTimeout(() => b.classList.remove('pop'), 300);
+                if (curBasket < teachMul) highlightBasket(curBasket); else stageCompleted();
             }
         }
-
-        function highlightBasket(index) {
-            document.querySelectorAll('.basket').forEach(b => b.classList.remove('highlight'));
-            let bas = document.getElementById(`basket-${index}`);
-            if (bas) bas.classList.add('highlight');
+        function stageCompleted() {
+            const total = teachTheme.num * teachMul;
+            const a = document.getElementById('eq-ans'); a.innerText = total; a.style.color = '#00b894'; a.classList.add('pop');
+            document.getElementById('hint-text').innerHTML = `太棒了！${teachMul} 個籃子，各有 ${teachTheme.num} 隻，總共是 ${total} 隻！🎉`;
+            const btn = document.getElementById('next-stage-btn'); btn.style.display = 'inline-block'; btn.classList.add('pop');
+            sfx.tada(); shootMini();
+            btn.innerHTML = teachMul === 9 ? '⭐ 大成功！(回去)' : '下一關！➡️';
         }
+        function nextLearnStage() { sfx.click(); if (teachMul < 9) { teachMul++; setupLearnStage(); } else { shootMax(); setTimeout(() => showScreen('learn-menu'), 2000); } }
 
-        // 點擊動物飛入籃子的邏輯
-        function moveToBasket(element) {
-            if (currentTargetBasket >= teachMultiplier) return; // 已經裝滿了
-
-            let currentBasket = document.getElementById(`basket-${currentTargetBasket}`);
-
-            // 將動物複製一份放進籃子，並加上 placed 樣式變小
-            let inBasketAnimal = document.createElement('div');
-            inBasketAnimal.innerText = teachTheme.icon;
-            inBasketAnimal.className = 'animal-item placed';
-            inBasketAnimal.style.animation = 'popIn 0.2s';
-            currentBasket.appendChild(inBasketAnimal);
-
-            // 移除被點擊的動物
-            element.remove();
-
-            animalsInCurrentBasket++;
-
-            // 檢查當前籃子是否裝滿 (等於被乘數)
-            if (animalsInCurrentBasket >= teachTheme.num) {
-                animalsInCurrentBasket = 0;
-                currentTargetBasket++;
-
-                // 發出完成一個籃子的小慶祝
-                currentBasket.classList.remove('highlight');
-                currentBasket.style.borderColor = '#00b894';
-                currentBasket.style.backgroundColor = 'rgba(0, 184, 148, 0.2)';
-                currentBasket.classList.add('pop');
-                setTimeout(() => currentBasket.classList.remove('pop'), 300);
-
-                if (currentTargetBasket < teachMultiplier) {
-                    highlightBasket(currentTargetBasket); // 下一個籃子發光
+        // === 記憶翻牌 ===
+        let flipCards = [], flipFlipped = [], flipLocked = false, flipMatched = 0;
+        function initFlipGame() {
+            flipFlipped = []; flipLocked = false; flipMatched = 0;
+            document.getElementById('flip-status').textContent = '找出所有配對！';
+            const pairs = [];
+            // 隨機抽8題
+            const pool = []; for (let a = 1; a <= 9; a++)for (let b = a; b <= 9; b++)pool.push({ a, b });
+            pool.sort(() => Math.random() - 0.5);
+            const chosen = pool.slice(0, 8);
+            chosen.forEach(p => {
+                pairs.push({ type: 'q', text: `${p.a} × ${p.b}`, ans: p.a * p.b, id: `q_${p.a}_${p.b}` });
+                pairs.push({ type: 'a', text: `${p.a * p.b}`, ans: p.a * p.b, id: `q_${p.a}_${p.b}` });
+            });
+            pairs.sort(() => Math.random() - 0.5);
+            const grid = document.getElementById('flip-grid'); grid.innerHTML = '';
+            pairs.forEach((p, i) => {
+                const card = document.createElement('div'); card.className = 'flip-card'; card.dataset.i = i; card.dataset.id = p.id; card.dataset.type = p.type; card.dataset.ans = p.ans;
+                card.innerHTML = `<div class="flip-card-inner"><div class="flip-front">❓</div><div class="flip-back">${p.text}</div></div>`;
+                card.onclick = () => flipCardClick(card);
+                grid.appendChild(card);
+            });
+            flipCards = Array.from(grid.querySelectorAll('.flip-card'));
+        }
+        function flipCardClick(card) {
+            if (flipLocked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            sfx.click();
+            card.classList.add('flipped');
+            flipFlipped.push(card);
+            if (flipFlipped.length === 2) {
+                flipLocked = true;
+                const [a, b] = flipFlipped;
+                if (a.dataset.id === b.dataset.id && a.dataset.type !== b.dataset.type) {
+                    sfx.correct(); shootMini();
+                    setTimeout(() => {
+                        a.classList.add('matched'); b.classList.add('matched'); flipFlipped = []; flipLocked = false; flipMatched++;
+                        document.getElementById('flip-status').textContent = `✅ 已配對 ${flipMatched}/8`;
+                        if (flipMatched === 8) { shootMax(); document.getElementById('flip-status').textContent = '🎉 全部配對成功！太棒了！'; }
+                    }, 500);
                 } else {
-                    stageCompleted(); // 全部的籃子都裝滿了！
+                    sfx.wrong();
+                    setTimeout(() => { a.classList.remove('flipped'); b.classList.remove('flipped'); flipFlipped = []; flipLocked = false; }, 900);
                 }
             }
         }
 
-        // 當算式完成
-        function stageCompleted() {
-            let total = teachTheme.num * teachMultiplier;
-            let ansEl = document.getElementById('eq-ans');
+        // === 快打挑戰 ===
+        let speedTimer = null, speedTimeLeft = 60, spScore = 0, spCorrect = 0, spWrong = 0, speedAns = 0, speedRunning = false;
+        function startSpeed() {
+            showScreen('speed-screen');
+            spScore = 0; spCorrect = 0; spWrong = 0; speedTimeLeft = 60; speedRunning = true;
+            updateSpStats();
+            nextSpeedQ();
+            document.getElementById('speed-inp').focus();
+            if (speedTimer) clearInterval(speedTimer);
+            speedTimer = setInterval(() => {
+                speedTimeLeft--;
+                document.getElementById('sp-time').textContent = speedTimeLeft;
+                const pct = speedTimeLeft / 60 * 100;
+                const bar = document.getElementById('timer-bar');
+                bar.style.width = pct + '%';
+                bar.style.background = pct > 40 ? 'linear-gradient(90deg,#00cec9,#0984e3)' : 'linear-gradient(90deg,#ff7675,#e17055)';
+                if (speedTimeLeft <= 0) {
+                    clearInterval(speedTimer); speedRunning = false;
+                    document.getElementById('speed-q').textContent = '時間到！';
+                    const inp = document.getElementById('speed-inp'); inp.disabled = true;
+                    setTimeout(() => {
+                        alert(`⏱ 時間到！\n⭐ 分數：${spScore}\n✅ 答對：${spCorrect}  ❌ 答錯：${spWrong}`);
+                        showScreen('home');
+                    }, 500);
+                }
+            }, 1000);
+        }
+        function stopSpeed() { clearInterval(speedTimer); speedRunning = false; document.getElementById('speed-inp').disabled = false; showScreen('home'); }
+        function nextSpeedQ() {
+            const a = Math.floor(Math.random() * 9) + 1, b = Math.floor(Math.random() * 9) + 1;
+            speedAns = a * b;
+            document.getElementById('speed-q').textContent = `${a} × ${b} = ?`;
+            const inp = document.getElementById('speed-inp'); inp.value = ''; inp.className = 'speed-inp'; inp.disabled = false; inp.focus();
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('speed-inp').addEventListener('keydown', e => {
+                if (e.key === 'Enter' && speedRunning) {
+                    const v = parseInt(document.getElementById('speed-inp').value);
+                    const inp = document.getElementById('speed-inp');
+                    if (v === speedAns) { sfx.correct(); spScore += 10; spCorrect++; inp.className = 'speed-inp c-flash'; }
+                    else { sfx.wrong(); spWrong++; inp.className = 'speed-inp w-flash'; }
+                    updateSpStats();
+                    setTimeout(() => { inp.className = 'speed-inp'; nextSpeedQ(); }, 300);
+                }
+            });
+            generateLearnMenu();
+            buildTblSel();
+            initFlipGame();
+        });
+        function updateSpStats() {
+            document.getElementById('sp-score').textContent = spScore;
+            document.getElementById('sp-correct').textContent = spCorrect;
+            document.getElementById('sp-wrong').textContent = spWrong;
+        }
 
-            ansEl.innerText = total;
-            ansEl.style.color = '#00b894';
-            ansEl.classList.add('pop');
-
-            document.getElementById('hint-text').innerText = `太棒了！ ${teachMultiplier} 個籃子，各有 ${teachTheme.num} 隻，總共是 ${total} 隻！🎉`;
-
-            let btn = document.getElementById('next-stage-btn');
-            btn.style.display = 'inline-block';
-            btn.classList.add('pop');
-
-            shootConfettiMini();
-
-            if (teachMultiplier === 9) {
-                btn.innerText = "⭐ 闖關大成功！(回選單)";
-            } else {
-                btn.innerText = "挑戰下一個！➡️";
+        // === 乘法填空 ===
+        let tblNum = 2;
+        function buildTblSel() {
+            const g = document.getElementById('tbl-sel-grid'); g.innerHTML = '';
+            for (let i = 1; i <= 9; i++) {
+                const b = document.createElement('button'); b.className = 'tbl-sel-btn'; b.textContent = `${i} 的乘法表`;
+                const color = ['#f5cd79', '#ffb8b8', '#baffc9', '#bae1ff', '#ffdfba', '#ffc6ff', '#81ecec', '#55efc4', '#ffeaa7'][i - 1];
+                b.style.borderBottom = `6px solid ${color}`;
+                b.onclick = () => openTable(i);
+                g.appendChild(b);
             }
         }
-
-        function nextLearnStage() {
-            if (teachMultiplier < 9) {
-                teachMultiplier++;
-                setupLearnStage();
-            } else {
-                shootConfettiMax();
-                setTimeout(() => showScreen('learn-menu'), 2000);
+        function openTable(n) {
+            tblNum = n;
+            document.getElementById('tbl-sel-area').style.display = 'none';
+            document.getElementById('tbl-area').style.display = 'block';
+            const tbl = document.getElementById('mult-table'); tbl.innerHTML = '';
+            const hdr = tbl.createTHead().insertRow();
+            ['乘法', `${n} ×`, `= ?`].forEach(t => { const th = document.createElement('th'); th.textContent = t; hdr.appendChild(th); });
+            const tb = tbl.createTBody();
+            for (let i = 1; i <= 9; i++) {
+                const row = tb.insertRow();
+                row.insertCell().innerHTML = `<strong>${i}</strong>`;
+                row.insertCell().innerHTML = `<strong>${n} × ${i}</strong>`;
+                const inp = document.createElement('input'); inp.type = 'number'; inp.inputMode = 'numeric'; inp.className = 'tblank'; inp.dataset.ans = n * i; inp.autocomplete = 'off';
+                inp.addEventListener('input', () => { inp.className = 'tblank'; });
+                inp.addEventListener('keydown', e => { if (e.key === 'Enter') { checkTable(); } });
+                row.insertCell().appendChild(inp);
             }
+            document.getElementById('tbl-score').textContent = `📝 ${n} 的乘法表 — 填入所有答案！`;
         }
-
-        /* =====================================
-           🎮 超級闖關挑戰 (遊戲模式) - 保持不變
-           ===================================== */
-        let currentScore = 0;
-        let currentCombo = 0;
-        let currentQuestion = {};
-        const praises = ['好棒！🎉', '光速！⚡', '太強了！🌟', '連擊！🔥', '完美！💯'];
-
-        function startGame() {
-            currentScore = 0;
-            currentCombo = 0;
-            updateStats();
-            nextQuestion();
+        function checkTable() {
+            const blanks = document.querySelectorAll('.tblank');
+            let ok = 0, tot = 0;
+            blanks.forEach(inp => {
+                tot++;
+                const v = parseInt(inp.value), a = parseInt(inp.dataset.ans);
+                if (inp.value === '') { inp.className = 'tblank'; return; }
+                if (v === a) { inp.className = 'tblank tc'; ok++; }
+                else { inp.className = 'tblank tw'; }
+            });
+            sfx.tada();
+            document.getElementById('tbl-score').textContent = `✅ 答對 ${ok}/${tot} 題！${ok === tot ? '🎉 全對！太厲害了！' : '再試試看！'}`;
+            if (ok === tot) shootMax();
         }
+        function resetTable() { document.querySelectorAll('.tblank').forEach(inp => { inp.value = ''; inp.className = 'tblank'; }); document.getElementById('tbl-score').textContent = `📝 ${tblNum} 的乘法表 — 填入所有答案！`; }
 
+        // === 遊戲模式 ===
+        let curScore = 0, curCombo = 0, curQ = {};
+        const praises = ['太棒了！🎉', '天才！💡', '太強了！🌟', '好聰明！🧠'];
+        function startGame() { curScore = 0; curCombo = 0; updateStats(); nextQuestion(); }
         function nextQuestion() {
-            const factor1 = Math.floor(Math.random() * 8) + 2;
-            const factor2 = Math.floor(Math.random() * 9) + 1;
-            const answer = factor1 * factor2;
-            currentQuestion = { factor1, factor2, answer };
+            const a = Math.floor(Math.random() * 9) + 1, b = Math.floor(Math.random() * 9) + 1, ans = a * b;
+            curQ = { a, b, ans };
+            const qEl = document.getElementById('question-text'); qEl.innerText = `${a} × ${b} = ?`; qEl.classList.add('pop'); setTimeout(() => qEl.classList.remove('pop'), 300);
+            let opts = new Set([ans]);
+            while (opts.size < 4) { const w = (Math.floor(Math.random() * 9) + 1) * (Math.floor(Math.random() * 9) + 1); if (w !== ans) opts.add(w); }
+            const arr = Array.from(opts).sort(() => Math.random() - 0.5);
+            const c = document.getElementById('options-container'); c.innerHTML = '';
+            arr.forEach(o => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = o; btn.onclick = () => checkAnswer(o, btn); c.appendChild(btn); });
+        }
+        function checkAnswer(sel, btn) {
+            if (sel === curQ.ans) { sfx.correct(); shootMini(); showFeedback(); curCombo++; curScore += 10 + curCombo * 5; updateStats(); document.querySelectorAll('.option-btn').forEach(b => b.disabled = true); setTimeout(nextQuestion, 800); }
+            else { sfx.wrong(); btn.classList.add('shake'); setTimeout(() => btn.classList.remove('shake'), 400); curCombo = 0; updateStats(); }
+        }
+        function updateStats() { document.getElementById('score').innerText = curScore; document.getElementById('combo').innerText = curCombo; }
+        function showFeedback() { const m = document.getElementById('feedback-msg'); m.innerHTML = praises[Math.floor(Math.random() * praises.length)]; m.classList.remove('show'); void m.offsetWidth; m.classList.add('show'); }
 
-            const questionEl = document.getElementById('question-text');
-            questionEl.innerText = `${factor1} × ${factor2} = ?`;
-            questionEl.classList.add('pop');
-            setTimeout(() => questionEl.classList.remove('pop'), 300);
+        // === 煙火 ===
+        function shootMini() { confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 }, colors: ['#ffeaa7', '#81ecec', '#ff7675'] }); }
+        function shootMax() { confetti({ particleCount: 150, zIndex: 9999 }); }
 
-            let options = new Set();
-            options.add(answer);
-            while (options.size < 4) {
-                let wrongAns = (Math.floor(Math.random() * 8) + 2) * (Math.floor(Math.random() * 9) + 1);
-                if (wrongAns !== answer) options.add(wrongAns);
-            }
-            let optionsArr = Array.from(options).sort(() => Math.random() - 0.5);
-
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
-            optionsArr.forEach((opt) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(opt, btn);
-                container.appendChild(btn);
+        // === PWA Service Worker Registration ===
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registered!', reg))
+                    .catch(err => console.log('Service Worker registration failed: ', err));
             });
         }
-
-        function checkAnswer(selected, btn) {
-            if (selected === currentQuestion.answer) {
-                shootConfettiMini();
-                showFeedback();
-                currentCombo++;
-                currentScore += 10 + (currentCombo * 5);
-                updateStats();
-                document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
-                setTimeout(nextQuestion, 800);
-            } else {
-                btn.classList.add('shake');
-                setTimeout(() => btn.classList.remove('shake'), 400);
-                currentCombo = 0;
-                updateStats();
-            }
-        }
-
-        function updateStats() {
-            document.getElementById('score').innerText = currentScore;
-            document.getElementById('combo').innerText = currentCombo;
-        }
-
-        /* =====================================
-           ✨ 共用的特效功能
-           ===================================== */
-        function shootConfettiMini() {
-            confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 }, colors: ['#ffeaa7', '#81ecec', '#ff7675'] });
-        }
-        function shootConfettiMax() {
-            confetti({ particleCount: 150, zIndex: 9999 });
-        }
-
-        function showFeedback() {
-            const msg = document.getElementById('feedback-msg');
-            msg.innerText = praises[Math.floor(Math.random() * praises.length)];
-            msg.classList.remove('show');
-            void msg.offsetWidth;
-            msg.classList.add('show');
-        }
-
-        window.onload = () => {
-            generateLearnMenu();
-        };
     </script>
 </body>
 
